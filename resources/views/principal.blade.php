@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <meta name="keyword" content="Sistema de Gestion Empresarial">
     <link rel="shortcut icon" href="img/favicon.png">
-    <title>Sistema Ventas - IncanatoIT</title>
+    <title>Sistema de Gestion Empresarial</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Icons -->
     <link href="css/plantilla.css" rel="stylesheet">

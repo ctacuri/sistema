@@ -12,7 +12,7 @@ class DetalleVenta extends Model
         'idarticulo',
         'cantidad',
         'precio',
-        'descuento'
+        'descuento'git 
     ];
     public $timestamps = false;
 }

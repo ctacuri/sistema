@@ -16,7 +16,7 @@
                     </template>
 
                     <template v-if="menu==3">
-                    <ingreso>></ingreso>
+                        <ingreso>></ingreso>
                     </template>
 
                     <template v-if="menu==4">
@@ -24,7 +24,7 @@
                     </template>
 
                     <template v-if="menu==5">
-                        <h1>Ventas</h1>
+                        <venta></venta>
                     </template>
 
                     <template v-if="menu==6">
@@ -54,9 +54,9 @@
                     <template v-if="menu==12">
                         <h1>Acerca de</h1>
                     </template>
-                @elseif (Auth::user()->idrol == 2)
+                @elseif (Auth::user()->idrol == 2) 
                     <template v-if="menu==5">
-                        <h1>Ventas</h1>
+                        <venta></venta>
                     </template>
 
                     <template v-if="menu==6">

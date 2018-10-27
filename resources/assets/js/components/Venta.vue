@@ -618,6 +618,9 @@
                     }
                     
                 }
+
+                
+
             },
             agregarDetalleModal(data =[]){
                 let me=this;
@@ -636,7 +639,7 @@
                             precio: data['precio_venta'],
                             descuento:0,
                             stock:data['stock']
-                        });
+                        }); 
                     }
             },
             listarArticulo (buscar,criterio){

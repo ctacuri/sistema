@@ -10,6 +10,9 @@
                     <div class="card-header">
                         <i class="fa fa-align-justify"></i> Artículos
                         <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
+                            <i class="icon-doc"></i>&nbsp;Reporte
+                        </button>
+                        <button type="button" @click="cargarPdf()" class="btn btn-info">
                             <i class="icon-plus"></i>&nbsp;Nuevo
                         </button>
                     </div>
@@ -246,6 +249,9 @@
                 .catch(function (error) {
                     console.log(error);
                 });
+            },
+            cargarPdf(){
+                window.open('http://localhost:8000/articulo/listarPdf','_blank');
             },
             selectCategoria(){
                 let me=this;

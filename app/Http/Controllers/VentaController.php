@@ -130,6 +130,9 @@ class VentaController extends Controller
             }          
  
             DB::commit();
+            return [
+                'id' => $venta->id
+            ];
         } catch (Exception $e){
             DB::rollBack();
         }

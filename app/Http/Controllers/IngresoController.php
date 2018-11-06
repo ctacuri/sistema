@@ -122,6 +122,7 @@ class IngresoController extends Controller
                 ]
             ];
             $allUsers = User::all();
+            
             foreach ($allUsers as $notificar) {
                 User::findOrFail($notificar->id)->notify(new NotifyAdmin($arregloDatos));
             }

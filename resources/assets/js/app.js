@@ -29,6 +29,7 @@ Vue.component('dashboard', require('./components/Dashboard.vue'));
 Vue.component('consultaingreso', require('./components/ConsultaIngreso.vue'));
 Vue.component('consultaventa', require('./components/ConsultaVenta.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
+Vue.component('empresa', require('./components/Empresa.vue'));
 
 const app = new Vue({
     el: '#app',
@@ -46,6 +47,7 @@ const app = new Vue({
         });
 
         var userId = $('meta[name="userId"]').attr('content');
+
         Echo.private('App.User.' + userId).notification((notification)=>{
             //console.log(notification);
             me.notifications.unshift(notification);

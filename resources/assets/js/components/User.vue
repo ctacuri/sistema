@@ -111,12 +111,13 @@
                                         <select v-model="tipo_documento" class="form-control">
                                             <option value="DNI">DNI</option>
                                             <option value="RUC">RUC</option>
+                                            <option value="CEDULA">CEDULA</option>
                                             <option value="PASS">PASS</option>
                                         </select>                                    
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Número</label>
+                                    <label class="col-md-3 form-control-label" for="text-input">Número documento</label>
                                     <div class="col-md-9">
                                         <input type="text" v-model="num_documento" class="form-control" placeholder="Número de documento">                                        
                                     </div>
@@ -144,13 +145,10 @@
                                     <div class="col-md-9">
                                         <select class="form-control" v-model="idrol">
                                             <option value="0">Seleccione un rol</option>
-                                            <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre">
-
-                                            </option>
+                                            <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre"></option>
                                         </select>
                                     </div>
                                 </div>
-                                
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Usuario (*)</label>
                                     <div class="col-md-9">
@@ -163,7 +161,6 @@
                                         <input type="password" v-model="password" class="form-control" placeholder="Password de acceso">
                                     </div>
                                 </div>
-
                                 <div v-show="errorPersona" class="form-group row div-error">
                                     <div class="text-center text-error">
                                         <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error">

@@ -213,7 +213,7 @@
                                                 <input v-model="detalle.descuento" type="number" class="form-control">
                                             </td>
                                             <td>
-                                                {{detalle.precio*detalle.cantidad-detalle.descuento}}
+                                                {{(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
@@ -226,7 +226,7 @@
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Neto:</strong></td>
-                                            <td>$ {{total=calcularTotal}}</td>
+                                            <td>$ {{total=calcularTotal.toFixed(2)}}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
@@ -608,8 +608,8 @@
                                 idarticulo: me.idarticulo,
                                 articulo: me.articulo,
                                 cantidad: me.cantidad,
-                                precio: me.precio,
-                                descuento: me.descuento,
+                                precio: me.precio.toFixed(2),
+                                descuento: me.descuento.toFixed(2),
                                 stock: me.stock
                             });
                             me.codigo="";
@@ -642,8 +642,8 @@
                             articulo: data['nombre'],
                             cantidad: 1,
                             precio: data['precio_venta'],
-                            descuento:0,
-                            stock:data['stock']
+                            descuento: 0,
+                            stock: data['stock']
                         }); 
                     }
             },

@@ -45,10 +45,10 @@ export default{
                 this.arrayNotifications = Object.values(this.notifications[0]);
                 //Validacion por indice fuera de rango
                 if(this.arrayNotifications.length > 3){
-                    //Si el tamaño es > 3 Es cuando las notificaciones son obtenidas desde el
-                    return Object.values(this.arrayNotifications[4]);
+                    //Si el tamaño es > 3 Es cuando las notificaciones son obtenidas desde el mismo servidor, es decir por la consulta con AXIOS
+                    return Object.values(this.arrayNotifications[4]); 
                 }else{
-                    //Si el tamaño es > 3 Es cuando las notificaciones son obtenidas desde el
+                    //Si el tamaño es < 3 Es cuando las notificaciones son obtenidas desde el canal privado, es decir mediante Laravel Echo y Pusher 
                     return Object.values(this.arrayNotifications[0]);
                 }
             }

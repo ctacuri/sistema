@@ -126,12 +126,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/user/desactivar', 'UserController@desactivar');
         Route::put('/user/activar', 'UserController@activar');
 
-
         Route::get('/empresa', 'EmpresaController@index');
         Route::post('/empresa/registrar', 'EmpresaController@store');
         Route::put('/empresa/actualizar', 'EmpresaController@update');
         Route::put('/empresa/desactivar', 'EmpresaController@desactivar');
         Route::put('/empresa/activar', 'EmpresaController@activar');
+        Route::get('/empresa/selectEmpresa', 'EmpresaController@selectEmpresa');
     });
     
 });

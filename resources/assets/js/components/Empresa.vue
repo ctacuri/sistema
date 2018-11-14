@@ -32,7 +32,7 @@
                                 <th>Opciones</th>
                                 <th>Ruc</th>
                                 <th>Nombre</th>
-                                <th>Telefonos</th>
+                                <th>Direccion</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -55,7 +55,7 @@
                                 </td>
                                 <td v-text="empresa.ruc"></td>
                                 <td v-text="empresa.nombre"></td>
-                                 <td v-text="empresa.telefono"></td>
+                                 <td v-text="empresa.direccion"></td>
                                 <td>
                                     <div v-if="empresa.condicion">
                                         <span class="badge badge-success">Activo</span>
@@ -110,6 +110,7 @@
                                     <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de empresa">
                                 </div>
                             </div>
+                            <!--
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="email-input">Departamento</label>
                                 <div class="col-md-9">
@@ -128,22 +129,23 @@
                                     <input type="text" v-model="nombre" class="form-control" placeholder="Distrito">
                                 </div>
                             </div>
+                            -->
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="email-input">Direccion</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control" placeholder="Direccion">
+                                    <input type="text" v-model="direccion" class="form-control" placeholder="Direccion">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="email-input">Telefono</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control" placeholder="Telefono">
+                                    <input type="text" v-model="telefono" class="form-control" placeholder="Telefono">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="email-input">Email</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control" placeholder="Email">
+                                    <input type="text" v-model="email" class="form-control" placeholder="Email">
                                 </div>
                             </div>
                             <div v-show="errorEmpresa" class="form-group row div-error">
@@ -176,6 +178,9 @@
                 empresa_id: 0,
                 ruc : '',
                 nombre : '',
+                direccion : '',
+                telefono : '',
+                email : '',
                 arrayEmpresa : [],
                 modal : 0,
                 tituloModal : '',
@@ -230,7 +235,7 @@
                 var url= '/empresa?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
-                    me.arrayEmpresa = respuesta.categorias.data;
+                    me.arrayEmpresa = respuesta.empresas.data;
                     me.pagination= respuesta.pagination;
                 })
                 .catch(function (error) {
@@ -253,7 +258,10 @@
 
                 axios.post('/empresa/registrar',{
                     'ruc': this.ruc,
-                    'nombre': this.nombre
+                    'nombre': this.nombre,
+                    'direccion': this.direccion,
+                    'telefono': this.telefono,
+                    'email': this.email
                 }).then(function (response) {
                     me.cerrarModal();
                     me.listarEmpresa(1,'','nombre');
@@ -271,6 +279,9 @@
                 axios.put('/empresa/actualizar',{
                     'ruc': this.ruc,
                     'nombre': this.nombre,
+                    'direccion': this.direccion,
+                    'telefono': this.telefono,
+                    'email': this.email,
                     'id': this.empresa_id
                 }).then(function (response) {
                     me.cerrarModal();
@@ -281,7 +292,7 @@
             },
             desactivarEmpresa(id){
                swal({
-                title: 'Esta seguro de desactivar esta categoría?',
+                title: 'Esta seguro de desactivar esta empresa?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -296,7 +307,7 @@
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/categoria/desactivar',{
+                    axios.put('/empresa/desactivar',{
                         'id': id
                     }).then(function (response) {
                         me.listarEmpresa(1,'','nombre');
@@ -320,7 +331,7 @@
             },
             activarEmpresa(id){
                swal({
-                title: 'Esta seguro de activar esta categoría?',
+                title: 'Esta seguro de activar esta empresa?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -335,7 +346,7 @@
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/categoria/activar',{
+                    axios.put('/empresa/activar',{
                         'id': id
                     }).then(function (response) {
                         me.listarEmpresa(1,'','nombre');
@@ -361,7 +372,7 @@
                 this.errorEmpresa=0;
                 this.errorMostrarMsjEmpresa =[];
 
-                if (!this.nombre) this.errorMostrarMsjEmpresa.push("El nombre de la categoría no puede estar vacío.");
+                if (!this.nombre) this.errorMostrarMsjEmpresa.push("El nombre de la empresa no puede estar vacío.");
 
                 if (this.errorMostrarMsjEmpresa.length) this.errorEmpresa = 1;
 
@@ -372,6 +383,9 @@
                 this.tituloModal='';
                 this.ruc='';
                 this.nombre='';
+                this.direccion='';
+                this.telefono='';
+                this.email='';
             },
             abrirModal(modelo, accion, data = []){
                 switch(modelo){
@@ -384,6 +398,9 @@
                                 this.tituloModal = 'Registrar Empresa';
                                 this.ruc= '';
                                 this.nombre = '';
+                                this.direccion='';
+                                this.telefono='';
+                                this.email='';
                                 this.tipoAccion = 1;
                                 break;
                             }
@@ -396,6 +413,9 @@
                                 this.empresa_id=data['id'];
                                 this.ruc = data['ruc'];
                                 this.nombre= data['nombre'];
+                                this.direccion= data['direccion'];
+                                this.telefono= data['telefono'];
+                                this.email= data['email'];
                                 break;
                             }
                         }

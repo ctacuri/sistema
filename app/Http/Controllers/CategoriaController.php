@@ -93,6 +93,5 @@ class CategoriaController extends Controller
         $categoria->condicion = '1';
         $categoria->save();
     }
- 
-     
+
 }

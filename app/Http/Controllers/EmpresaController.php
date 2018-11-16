@@ -8,7 +8,7 @@ use App\Empresa;
 class EmpresaController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
 
@@ -23,14 +23,14 @@ class EmpresaController extends Controller
  
         return [
             'pagination' => [
-                'total'        => $categorias->total(),
-                'current_page' => $categorias->currentPage(),
-                'per_page'     => $categorias->perPage(),
-                'last_page'    => $categorias->lastPage(),
-                'from'         => $categorias->firstItem(),
-                'to'           => $categorias->lastItem(),
+                'total'        => $empresas->total(),
+                'current_page' => $empresas->currentPage(),
+                'per_page'     => $empresas->perPage(),
+                'last_page'    => $empresas->lastPage(),
+                'from'         => $empresas->firstItem(),
+                'to'           => $empresas->lastItem(),
             ],
-            'categorias' => $categorias
+            'empresas' => $empresas
         ];
     }
 

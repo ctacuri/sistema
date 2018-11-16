@@ -37,9 +37,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="categoria in arrayEmpresa" :key="categoria.id">
+                            <tr v-for="empresa in arrayEmpresa" :key="empresa.id">
                                 <td>
-                                    <button type="button" @click="abrirModal('empresa','actualizar',categoria)" class="btn btn-warning btn-sm">
+                                    <button type="button" @click="abrirModal('empresa','actualizar',empresa)" class="btn btn-warning btn-sm">
                                         <i class="icon-pencil"></i>
                                     </button> &nbsp;
                                     <template v-if="empresa.condicion">
@@ -234,8 +234,9 @@
                 let me=this;
                 var url= '/empresa?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
                 axios.get(url).then(function (response) {
-                    var respuesta= response.data;
+                    var respuesta = response.data;
                     me.arrayEmpresa = respuesta.empresas.data;
+
                     me.pagination= respuesta.pagination;
                 })
                 .catch(function (error) {
@@ -422,6 +423,9 @@
                     }
                 }
             }
+        },
+        mounted() {
+            this.listarEmpresa(1,this.buscar,this.criterio);
         }
     }
 </script>

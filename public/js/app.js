@@ -71936,6 +71936,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.get(url).then(function (response) {
                 var respuesta = response.data;
                 me.arrayEmpresa = respuesta.empresas.data;
+
                 me.pagination = respuesta.pagination;
             }).catch(function (error) {
                 console.log(error);
@@ -72109,6 +72110,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
             }
         }
+    },
+    mounted: function mounted() {
+        this.listarEmpresa(1, this.buscar, this.criterio);
     }
 });
 
@@ -72243,8 +72247,8 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "tbody",
-                _vm._l(_vm.arrayEmpresa, function(categoria) {
-                  return _c("tr", { key: categoria.id }, [
+                _vm._l(_vm.arrayEmpresa, function(empresa) {
+                  return _c("tr", { key: empresa.id }, [
                     _c(
                       "td",
                       [
@@ -72255,18 +72259,14 @@ var render = function() {
                             attrs: { type: "button" },
                             on: {
                               click: function($event) {
-                                _vm.abrirModal(
-                                  "empresa",
-                                  "actualizar",
-                                  categoria
-                                )
+                                _vm.abrirModal("empresa", "actualizar", empresa)
                               }
                             }
                           },
                           [_c("i", { staticClass: "icon-pencil" })]
                         ),
                         _vm._v("  \n                                "),
-                        _vm.empresa.condicion
+                        empresa.condicion
                           ? [
                               _c(
                                 "button",
@@ -72275,7 +72275,7 @@ var render = function() {
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.desactivarEmpresa(_vm.empresa.id)
+                                      _vm.desactivarEmpresa(empresa.id)
                                     }
                                   }
                                 },
@@ -72290,7 +72290,7 @@ var render = function() {
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.activarEmpresa(_vm.empresa.id)
+                                      _vm.activarEmpresa(empresa.id)
                                     }
                                   }
                                 },
@@ -72302,19 +72302,19 @@ var render = function() {
                     ),
                     _vm._v(" "),
                     _c("td", {
-                      domProps: { textContent: _vm._s(_vm.empresa.ruc) }
+                      domProps: { textContent: _vm._s(empresa.ruc) }
                     }),
                     _vm._v(" "),
                     _c("td", {
-                      domProps: { textContent: _vm._s(_vm.empresa.nombre) }
+                      domProps: { textContent: _vm._s(empresa.nombre) }
                     }),
                     _vm._v(" "),
                     _c("td", {
-                      domProps: { textContent: _vm._s(_vm.empresa.direccion) }
+                      domProps: { textContent: _vm._s(empresa.direccion) }
                     }),
                     _vm._v(" "),
                     _c("td", [
-                      _vm.empresa.condicion
+                      empresa.condicion
                         ? _c("div", [
                             _c("span", { staticClass: "badge badge-success" }, [
                               _vm._v("Activo")

@@ -1,7 +1,7 @@
     @extends('principal')
     @section('contenido')
 
-     @if(Auth::check())
+        @if(Auth::check())
                 @if (Auth::user()->idrol == 1)
                     <template v-if="menu==0">
                         <dashboard></dashboard>
@@ -47,6 +47,7 @@
                         <consultaventa></consultaventa>
                     </template>
 
+                    <!--
                     <template v-if="menu==11">
                         <h1>Ayuda</h1>
                     </template>
@@ -54,6 +55,7 @@
                     <template v-if="menu==12">
                         <h1>Acerca de</h1>
                     </template>
+                    -->
 
                     <template v-if="menu==13">
                         <empresa></empresa>
@@ -75,6 +77,7 @@
                         <consultaventa></consultaventa>
                     </template>
 
+                    <!--
                     <template v-if="menu==11">
                         <h1>Ayuda</h1>
                     </template>
@@ -82,6 +85,7 @@
                     <template v-if="menu==12">
                         <h1>Acerca de</h1>
                     </template>
+                    -->
                 @elseif (Auth::user()->idrol == 3)
                     <template v-if="menu==0">
                         <dashboard></dashboard>
@@ -107,6 +111,7 @@
                         <consultaingreso></consultaingreso>
                     </template>
 
+                    <!--
                     <template v-if="menu==11">
                         <h1>Ayuda</h1>
                     </template>
@@ -114,11 +119,11 @@
                     <template v-if="menu==12">
                         <h1>Acerca de</h1>
                     </template>
+                    -->
                 @else
     
                 @endif
-    
-    @endif
-
         
+        @endif
+
     @endsection

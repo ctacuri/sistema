@@ -16,9 +16,9 @@ class EmpresaController extends Controller
         $criterio = $request->criterio;
 
         if($buscar==''){
-            $empresas = Empresa::orderBy('id', 'desc')->paginate(3);
+            $empresas = Empresa::orderBy('id', 'desc')->paginate(6);
         }else{
-            $empresas = Empresa::where($criterio, 'like', '%'.$buscar.'%')->orderBy('id', 'desc')->paginate(3);
+            $empresas = Empresa::where($criterio, 'like', '%'.$buscar.'%')->orderBy('id', 'desc')->paginate(6);
         }
  
         return [

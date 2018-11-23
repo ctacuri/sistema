@@ -57,16 +57,16 @@ class UserController extends Controller
         try{
             DB::beginTransaction();
             $persona = new Persona();
-            $persona->nombre = $request->nombre;
+            $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
             $persona->num_documento = $request->num_documento;
-            $persona->direccion = $request->direccion;
+            $persona->direccion = strtoupper($request->direccion);
             $persona->telefono = $request->telefono;
-            $persona->email = $request->email;
+            $persona->email = strtoupper($request->email);
             $persona->save();
  
             $user = new User();
-            $user->usuario = $request->usuario;
+            $user->usuario = strtoupper($request->usuario);
             $user->password = bcrypt( $request->password);
             $user->condicion = '1';
             $user->idrol = $request->idrol;          
@@ -94,16 +94,16 @@ class UserController extends Controller
  
             $persona = Persona::findOrFail($user->id);
  
-            $persona->nombre = $request->nombre;
+            $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
             $persona->num_documento = $request->num_documento;
-            $persona->direccion = $request->direccion;
+            $persona->direccion = strtoupper($request->direccion);
             $persona->telefono = $request->telefono;
-            $persona->email = $request->email;
+            $persona->email = strtoupper($request->email);
             $persona->save();
  
              
-            $user->usuario = $request->usuario;
+            $user->usuario = strtoupper($request->usuario);
             $user->password = bcrypt( $request->password);
             $user->condicion = '1';
             $user->idrol = $request->idrol;

@@ -62,8 +62,8 @@
                                     <td v-text="articulo.codigo"></td>
                                     <td v-text="articulo.nombre"></td>
                                     <td v-text="articulo.nombre_categoria"></td>
-                                    <td v-text="articulo.precio_venta"></td>
-                                    <td v-text="articulo.stock"></td>
+                                    <td v-text="articulo.precio_venta" class="text-right"></td>
+                                    <td v-text="articulo.stock" class="text-right"></td>
                                     <td v-text="articulo.descripcion"></td>
                                     <td>
                                         <div v-if="articulo.condicion">
@@ -481,5 +481,11 @@
     .text-error{
         color: red !important;
         font-weight: bold;
+    }
+    .text-right{
+        text-align: right;
+    }
+    .text-left{
+        text-align: left;
     }
 </style>

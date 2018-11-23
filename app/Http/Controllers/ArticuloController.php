@@ -130,10 +130,10 @@ class ArticuloController extends Controller
         $articulo = new Articulo();
         $articulo->idcategoria = $request->idcategoria;
         $articulo->codigo = $request->codigo;
-        $articulo->nombre = $request->nombre;
+        $articulo->nombre = strtoupper($request->nombre);
         $articulo->precio_venta = $request->precio_venta;
         $articulo->stock = $request->stock;
-        $articulo->descripcion = $request->descripcion;
+        $articulo->descripcion = strtoupper($request->descripcion);
         $articulo->condicion = '1';
         $articulo->save();
     }
@@ -143,10 +143,10 @@ class ArticuloController extends Controller
         $articulo = Articulo::findOrFail($request->id);
         $articulo->idcategoria = $request->idcategoria;
         $articulo->codigo = $request->codigo;
-        $articulo->nombre = $request->nombre;
+        $articulo->nombre = strtoupper($request->nombre);
         $articulo->precio_venta = $request->precio_venta;
         $articulo->stock = $request->stock;
-        $articulo->descripcion = $request->descripcion;
+        $articulo->descripcion = strtoupper($request->descripcion);
         $articulo->condicion = '1';
         $articulo->save();
     }

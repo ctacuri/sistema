@@ -137,7 +137,7 @@
                                             <td v-text="detalle.descuento">
                                             </td>
                                             <td>
-                                                {{detalle.precio*detalle.cantidad-detalle.descuento}}
+                                                {{(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
@@ -150,7 +150,7 @@
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="4" align="right"><strong>Total Neto:</strong></td>
-                                            <td>$ {{total}}</td>
+                                            <td>$ {{total.toFixed(2)}}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
@@ -364,6 +364,12 @@
     .text-error{
         color: red !important;
         font-weight: bold;
+    }
+    .text-right{
+        text-align: right;
+    }
+    .text-left{
+        text-align: left;
     }
     @media (min-width: 600px) {
         .btnagregar {

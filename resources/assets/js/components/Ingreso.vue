@@ -63,8 +63,8 @@
                                         <td v-text="ingreso.serie_comprobante"></td>
                                         <td v-text="ingreso.num_comprobante"></td>
                                         <td v-text="ingreso.fecha_hora"></td>
-                                        <td v-text="ingreso.total"></td>
-                                        <td v-text="ingreso.impuesto"></td>
+                                        <td v-text="ingreso.total" class="text-right"></td>
+                                        <td v-text="ingreso.impuesto" class="text-right"></td>
                                         <td v-text="ingreso.estado"></td>
                                     </tr>                                
                                 </tbody>
@@ -789,6 +789,12 @@
     .text-error{
         color: red !important;
         font-weight: bold;
+    }
+    .text-right{
+        text-align: right;
+    }
+    .text-left{
+        text-align: left;
     }
     @media (min-width: 600px) {
         .btnagregar {

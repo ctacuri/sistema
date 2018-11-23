@@ -56,8 +56,8 @@ class CategoriaController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $categoria = new Categoria();
-        $categoria->nombre = $request->nombre;
-        $categoria->descripcion = $request->descripcion;
+        $categoria->nombre = strtoupper($request->nombre);
+        $categoria->descripcion = strtoupper($request->descripcion);
         $categoria->condicion = '1';
         $categoria->save();
     }

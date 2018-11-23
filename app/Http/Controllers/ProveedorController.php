@@ -67,16 +67,16 @@ class ProveedorController extends Controller
         try{
             DB::beginTransaction();
             $persona = new Persona();
-            $persona->nombre = $request->nombre;
+            $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
             $persona->num_documento = $request->num_documento;
-            $persona->direccion = $request->direccion;
+            $persona->direccion = strtoupper($request->direccion);
             $persona->telefono = $request->telefono;
-            $persona->email = $request->email;
+            $persona->email = strtoupper($request->email);
             $persona->save();
  
             $proveedor = new Proveedor();
-            $proveedor->contacto = $request->contacto;
+            $proveedor->contacto = strtoupper($request->contacto);
             $proveedor->telefono_contacto = $request->telefono_contacto;
             $proveedor->id = $persona->id;
             $proveedor->save();
@@ -101,16 +101,16 @@ class ProveedorController extends Controller
  
             $persona = Persona::findOrFail($proveedor->id);
  
-            $persona->nombre = $request->nombre;
+            $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
             $persona->num_documento = $request->num_documento;
-            $persona->direccion = $request->direccion;
+            $persona->direccion = strtoupper($request->direccion);
             $persona->telefono = $request->telefono;
-            $persona->email = $request->email;
+            $persona->email = strtoupper($request->email);
             $persona->save();
  
              
-            $proveedor->contacto = $request->contacto;
+            $proveedor->contacto = strtoupper($request->contacto);
             $proveedor->telefono_contacto = $request->telefono_contacto;
             $proveedor->save();
  

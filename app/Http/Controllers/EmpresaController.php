@@ -46,10 +46,10 @@ class EmpresaController extends Controller
         if (!$request->ajax()) return redirect('/');
         $empresa = new Empresa();
         $empresa->ruc = $request->ruc;
-        $empresa->nombre = $request->nombre;
-        $empresa->direccion = $request->direccion;
+        $empresa->nombre = strtoupper($request->nombre);
+        $empresa->direccion = strtoupper($request->direccion);
         $empresa->telefono = $request->telefono;
-        $empresa->email = $request->email;
+        $empresa->email = strtoupper($request->email);
         $empresa->condicion = '1';
         $empresa->save();
     }

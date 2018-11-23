@@ -55502,7 +55502,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n.text-right{\n    text-align: right;\n}\n.text-left{\n    text-align: left;\n}\n", ""]);
 
 // exports
 
@@ -58812,10 +58812,12 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("td", {
+                      staticClass: "text-right",
                       domProps: { textContent: _vm._s(articulo.precio_venta) }
                     }),
                     _vm._v(" "),
                     _c("td", {
+                      staticClass: "text-right",
                       domProps: { textContent: _vm._s(articulo.stock) }
                     }),
                     _vm._v(" "),
@@ -63789,7 +63791,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n.text-right{\n    text-align: right;\n}\n.text-left{\n    text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
 
 // exports
 
@@ -64811,10 +64813,12 @@ var render = function() {
                               }),
                               _vm._v(" "),
                               _c("td", {
+                                staticClass: "text-right",
                                 domProps: { textContent: _vm._s(ingreso.total) }
                               }),
                               _vm._v(" "),
                               _c("td", {
+                                staticClass: "text-right",
                                 domProps: {
                                   textContent: _vm._s(ingreso.impuesto)
                                 }
@@ -66327,7 +66331,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n.text-right{\n    text-align: right;\n}\n.text-left{\n    text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
 
 // exports
 
@@ -67741,7 +67745,8 @@ var render = function() {
                               staticClass: "form-control",
                               attrs: {
                                 type: "text",
-                                placeholder: "Ingrese artículo"
+                                placeholder: "Ingrese artículo",
+                                size: "12"
                               },
                               domProps: { value: _vm.codigo },
                               on: {
@@ -69326,7 +69331,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n.text-right{\n    text-align: right;\n}\n.text-left{\n    text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n", ""]);
 
 // exports
 
@@ -69872,10 +69877,12 @@ var render = function() {
                               }),
                               _vm._v(" "),
                               _c("td", {
+                                staticClass: "text-right",
                                 domProps: { textContent: _vm._s(ingreso.total) }
                               }),
                               _vm._v(" "),
                               _c("td", {
+                                staticClass: "text-right",
                                 domProps: {
                                   textContent: _vm._s(ingreso.impuesto)
                                 }
@@ -70386,7 +70393,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    position: absolute !important;\n}\n.mostrar{\n    display: list-item !important;\n    opacity: 1 !important;\n    position: absolute !important;\n    background-color: #3c29297a !important;\n}\n.div-error{\n    display: flex;\n    justify-content: center;\n}\n.text-error{\n    color: red !important;\n    font-weight: bold;\n}\n.text-right{\n    text-align: right;\n}\n.text-left{\n    text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n        margin-top: 2rem;\n}\n}\n\n", ""]);
 
 // exports
 
@@ -71172,9 +71179,11 @@ var render = function() {
                                           _vm._v(
                                             "\n                                        " +
                                               _vm._s(
-                                                detalle.precio *
-                                                  detalle.cantidad -
+                                                (
+                                                  detalle.precio *
+                                                    detalle.cantidad -
                                                   detalle.descuento
+                                                ).toFixed(2)
                                               ) +
                                               "\n                                    "
                                           )
@@ -71239,7 +71248,9 @@ var render = function() {
                                         _vm._m(6),
                                         _vm._v(" "),
                                         _c("td", [
-                                          _vm._v("$ " + _vm._s(_vm.total))
+                                          _vm._v(
+                                            "$ " + _vm._s(_vm.total.toFixed(2))
+                                          )
                                         ])
                                       ]
                                     )

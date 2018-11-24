@@ -88,7 +88,7 @@
                         <div class="modal-body">
                             <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Nombre (*)</label>
+                                    <label class="col-md-3 form-control-label" for="text-input">Nombre/Empresa (*)</label>
                                     <div class="col-md-9">
                                         <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona">                                        
                                     </div>
@@ -99,7 +99,8 @@
                                         <select v-model="tipo_documento" class="form-control">
                                             <option value="DNI">DNI</option>
                                             <option value="RUC">RUC</option>
-                                            <option value="PASS">PASS</option>
+                                            <option value="CE">CE</option>
+                                            <option value="PASS">PASAPORTE</option>
                                         </select>                                    
                                     </div>
                                 </div>

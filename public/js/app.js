@@ -65,115 +65,6 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -480,6 +371,115 @@ module.exports = {
   extend: extend,
   trim: trim
 };
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
 
 
 /***/ }),
@@ -1291,7 +1291,7 @@ o[t.label]=e,o)),t._v(" "),t.multiple?n("button",{staticClass:"close",attrs:{dis
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 var normalizeHeaderName = __webpack_require__(38);
 
 var DEFAULT_CONTENT_TYPE = {
@@ -1599,7 +1599,7 @@ process.umask = function() { return 0; };
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 var settle = __webpack_require__(39);
 var buildURL = __webpack_require__(41);
 var parseHeaders = __webpack_require__(42);
@@ -22105,7 +22105,7 @@ module.exports = __webpack_require__(35);
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 var bind = __webpack_require__(15);
 var Axios = __webpack_require__(37);
 var defaults = __webpack_require__(14);
@@ -22192,7 +22192,7 @@ function isSlowBuffer (obj) {
 
 
 var defaults = __webpack_require__(14);
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(46);
 var dispatchRequest = __webpack_require__(47);
 
@@ -22277,7 +22277,7 @@ module.exports = Axios;
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
@@ -22357,7 +22357,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 function encode(val) {
   return encodeURIComponent(val).
@@ -22432,7 +22432,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -22492,7 +22492,7 @@ module.exports = function parseHeaders(headers) {
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -22610,7 +22610,7 @@ module.exports = btoa;
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -22670,7 +22670,7 @@ module.exports = (
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 function InterceptorManager() {
   this.handlers = [];
@@ -22729,7 +22729,7 @@ module.exports = InterceptorManager;
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 var transformData = __webpack_require__(48);
 var isCancel = __webpack_require__(19);
 var defaults = __webpack_require__(14);
@@ -22822,7 +22822,7 @@ module.exports = function dispatchRequest(config) {
 "use strict";
 
 
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(0);
 
 /**
  * Transform the data for a request or a response
@@ -54379,7 +54379,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(60)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(63)
 /* template */
@@ -54432,7 +54432,7 @@ var content = __webpack_require__(61);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("3aed04c7", content, false, {});
+var update = __webpack_require__(4)("29c0b732", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -55425,7 +55425,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(66)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(68)
 /* template */
@@ -55478,7 +55478,7 @@ var content = __webpack_require__(67);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("639cd0db", content, false, {});
+var update = __webpack_require__(4)("58c7bd3b", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -59388,7 +59388,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(107)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(109)
 /* template */
@@ -59441,7 +59441,7 @@ var content = __webpack_require__(108);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("47fc4540", content, false, {});
+var update = __webpack_require__(4)("ccd03600", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -60516,7 +60516,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(112)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(114)
 /* template */
@@ -60569,7 +60569,7 @@ var content = __webpack_require__(113);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("cc4af172", content, false, {});
+var update = __webpack_require__(4)("4a0d26e7", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -60604,6 +60604,7 @@ exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    pos
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
 //
 //
 //
@@ -61310,7 +61311,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Nombre (*)")]
+                        [_vm._v("Nombre/Empresa (*)")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-9" }, [
@@ -61389,8 +61390,12 @@ var render = function() {
                               _vm._v("RUC")
                             ]),
                             _vm._v(" "),
+                            _c("option", { attrs: { value: "CE" } }, [
+                              _vm._v("CE")
+                            ]),
+                            _vm._v(" "),
                             _c("option", { attrs: { value: "PASS" } }, [
-                              _vm._v("PASS")
+                              _vm._v("PASAPORTE")
                             ])
                           ]
                         )
@@ -61754,7 +61759,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(117)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(119)
 /* template */
@@ -61807,7 +61812,7 @@ var content = __webpack_require__(118);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("c211b290", content, false, {});
+var update = __webpack_require__(4)("d9fc0350", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -62267,7 +62272,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(122)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(124)
 /* template */
@@ -62320,7 +62325,7 @@ var content = __webpack_require__(123);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("2c3246de", content, false, {});
+var update = __webpack_require__(4)("7736f8f1", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -63714,7 +63719,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(127)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(129)
 /* template */
@@ -63767,7 +63772,7 @@ var content = __webpack_require__(128);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("39cd99eb", content, false, {});
+var update = __webpack_require__(4)("1138bcea", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -66254,7 +66259,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(132)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(134)
 /* template */
@@ -66307,7 +66312,7 @@ var content = __webpack_require__(133);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("c77ec9ac", content, false, {});
+var update = __webpack_require__(4)("8e17ea6c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -66915,11 +66920,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         encuentra: function encuentra(id) {
             var sw = 0;
-            for (var i = 0; i < this.arrayDetalle.length; i++) {
-                if (this.arrayDetalle[i].idarticulo == id) {
-                    sw = true;
+            /*for(var i=0;i<this.arrayDetalle.length;i++){
+                if(this.arrayDetalle[i].idarticulo==id){
+                    sw=true;
                 }
-            }
+            }*/
             return sw;
         },
         eliminarDetalle: function eliminarDetalle(index) {
@@ -66947,8 +66952,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                             idarticulo: me.idarticulo,
                             articulo: me.articulo,
                             cantidad: me.cantidad,
-                            precio: me.precio.toFixed(2),
-                            descuento: me.descuento.toFixed(2),
+                            precio: me.precio,
+                            descuento: me.descuento,
                             stock: me.stock
                         });
                         me.codigo = "";
@@ -68130,19 +68135,23 @@ var render = function() {
                                           })
                                         ]),
                                         _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(
-                                            "\n                                        " +
-                                              _vm._s(
-                                                (
-                                                  detalle.precio *
-                                                    detalle.cantidad -
-                                                  detalle.descuento
-                                                ).toFixed(2)
-                                              ) +
-                                              "\n                                    "
-                                          )
-                                        ])
+                                        _c(
+                                          "td",
+                                          { staticClass: "text-right" },
+                                          [
+                                            _vm._v(
+                                              "\n                                        " +
+                                                _vm._s(
+                                                  (
+                                                    detalle.precio *
+                                                      detalle.cantidad -
+                                                    detalle.descuento
+                                                  ).toFixed(2)
+                                                ) +
+                                                "\n                                    "
+                                            )
+                                          ]
+                                        )
                                       ])
                                     }),
                                     _vm._v(" "),
@@ -68156,16 +68165,21 @@ var render = function() {
                                       [
                                         _vm._m(3),
                                         _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(
-                                            "$ " +
-                                              _vm._s(
-                                                (_vm.totalParcial = (
-                                                  _vm.total - _vm.totalImpuesto
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
+                                        _c(
+                                          "td",
+                                          { staticClass: "text-right" },
+                                          [
+                                            _vm._v(
+                                              "$ " +
+                                                _vm._s(
+                                                  (_vm.totalParcial = (
+                                                    _vm.total -
+                                                    _vm.totalImpuesto
+                                                  ).toFixed(2))
+                                                )
+                                            )
+                                          ]
+                                        )
                                       ]
                                     ),
                                     _vm._v(" "),
@@ -68179,17 +68193,21 @@ var render = function() {
                                       [
                                         _vm._m(4),
                                         _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(
-                                            "$ " +
-                                              _vm._s(
-                                                (_vm.totalImpuesto = (
-                                                  (_vm.total * _vm.impuesto) /
-                                                  (1 + _vm.impuesto)
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
+                                        _c(
+                                          "td",
+                                          { staticClass: "text-right" },
+                                          [
+                                            _vm._v(
+                                              "$ " +
+                                                _vm._s(
+                                                  (_vm.totalImpuesto = (
+                                                    (_vm.total * _vm.impuesto) /
+                                                    (1 + _vm.impuesto)
+                                                  ).toFixed(2))
+                                                )
+                                            )
+                                          ]
+                                        )
                                       ]
                                     ),
                                     _vm._v(" "),
@@ -68203,16 +68221,20 @@ var render = function() {
                                       [
                                         _vm._m(5),
                                         _vm._v(" "),
-                                        _c("td", [
-                                          _vm._v(
-                                            "$ " +
-                                              _vm._s(
-                                                (_vm.total = _vm.calcularTotal.toFixed(
-                                                  2
-                                                ))
-                                              )
-                                          )
-                                        ])
+                                        _c(
+                                          "td",
+                                          { staticClass: "text-right" },
+                                          [
+                                            _vm._v(
+                                              "$ " +
+                                                _vm._s(
+                                                  (_vm.total = _vm.calcularTotal.toFixed(
+                                                    2
+                                                  ))
+                                                )
+                                            )
+                                          ]
+                                        )
                                       ]
                                     )
                                   ],
@@ -68954,7 +68976,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(137)
 /* template */
@@ -69254,7 +69276,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(140)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(142)
 /* template */
@@ -69307,7 +69329,7 @@ var content = __webpack_require__(141);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("626f5100", content, false, {});
+var update = __webpack_require__(4)("98588ec0", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -70316,7 +70338,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(145)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(147)
 /* template */
@@ -70369,7 +70391,7 @@ var content = __webpack_require__(146);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("d64ea080", content, false, {});
+var update = __webpack_require__(4)("b51b0140", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -71406,7 +71428,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(150)
 /* template */
@@ -71621,7 +71643,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(153)
 }
-var normalizeComponent = __webpack_require__(0)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(155)
 /* template */
@@ -71674,7 +71696,7 @@ var content = __webpack_require__(154);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("423a9784", content, false, {});
+var update = __webpack_require__(4)("c70e8844", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags

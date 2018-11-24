@@ -212,21 +212,21 @@
                                                 <span style="color:red;" v-show="detalle.descuento>(detalle.precio*detalle.cantidad)">Descuento superior</span>
                                                 <input v-model="detalle.descuento" type="number" class="form-control">
                                             </td>
-                                            <td>
+                                            <td class="text-right">
                                                 {{(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Parcial:</strong></td>
-                                            <td>$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}</td>
+                                            <td class="text-right">$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Impuesto:</strong></td>
-                                            <td>$ {{totalImpuesto=((total*impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                            <td class="text-right">$ {{totalImpuesto=((total*impuesto)/(1+impuesto)).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Neto:</strong></td>
-                                            <td>$ {{total=calcularTotal.toFixed(2)}}</td>
+                                            <td class="text-right">$ {{total=calcularTotal.toFixed(2)}}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
@@ -572,11 +572,11 @@
             },
             encuentra(id){
                 var sw=0;
-                for(var i=0;i<this.arrayDetalle.length;i++){
+                /*for(var i=0;i<this.arrayDetalle.length;i++){
                     if(this.arrayDetalle[i].idarticulo==id){
                         sw=true;
                     }
-                }
+                }*/
                 return sw;
             },
             eliminarDetalle(index){
@@ -586,30 +586,28 @@
             agregarDetalle(){
                 let me=this;
                 if(me.idarticulo==0 || me.cantidad==0 || me.precio==0){
-                }
-                else{
+                
+                }else{
                     if(me.encuentra(me.idarticulo)){
                         swal({
                             type: 'error',
                             title: 'Error...',
                             text: 'Ese artículo ya se encuentra agregado!',
                             })
-                    }
-                    else{
+                    }else{
                        if(me.cantidad>me.stock){
                            swal({
                             type: 'error',
                             title: 'Error...',
                             text: 'NO hay stock disponible!',
                             })
-                       } 
-                       else{
+                       }else{
                            me.arrayDetalle.push({
                                 idarticulo: me.idarticulo,
                                 articulo: me.articulo,
                                 cantidad: me.cantidad,
-                                precio: me.precio.toFixed(2),
-                                descuento: me.descuento.toFixed(2),
+                                precio: me.precio,
+                                descuento: me.descuento,
                                 stock: me.stock
                             });
                             me.codigo="";

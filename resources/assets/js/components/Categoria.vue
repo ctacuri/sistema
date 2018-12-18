@@ -98,14 +98,14 @@
                         <div class="form-group row">
                             <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                             <div class="col-md-9">
-                                <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de categoría">
+                                <input type="text" v-model="nombre" class="form-control text-uppercase" placeholder="Nombre de categoría">
                                 
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
                             <div class="col-md-9">
-                                <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripción">
+                                <input type="email" v-model="descripcion" class="form-control text-uppercase" placeholder="Ingrese descripción">
                             </div>
                         </div>
                         <div v-show="errorCategoria" class="form-group row div-error">
@@ -207,8 +207,8 @@
                 //Envia la petición para visualizar la data de esa página
                 me.listarCategoria(page,buscar,criterio);
             },
-            registrarCategoria(){
-                if (this.validarCategoria()){
+            async registrarCategoria(){
+                if (await this.validarCategoria()){
                     return;
                 }
                 
@@ -224,8 +224,8 @@
                     console.log(error);
                 });
             },
-            actualizarCategoria(){
-               if (this.validarCategoria()){
+            async actualizarCategoria(){
+               if (await this.validarCategoria()){
                     return;
                 }
                 
@@ -254,7 +254,7 @@
                 confirmButtonClass: 'btn btn-success',
                 cancelButtonClass: 'btn btn-danger',
                 buttonsStyling: false,
-                reverseButtons: true
+                reverseButtons: true,
                 }).then((result) => {
                 if (result.value) {
                     let me = this;
@@ -320,11 +320,32 @@
                 }
                 }) 
             },
-            validarCategoria(){
+            async validarCategoria(){
+                let me = this;
+
                 this.errorCategoria=0;
                 this.errorMostrarMsjCategoria =[];
 
-                if (!this.nombre) this.errorMostrarMsjCategoria.push("El nombre de la categoría no puede estar vacío.");
+                if (!this.nombre) {
+                    this.errorMostrarMsjCategoria.push("El nombre de la categoría no puede estar vacío.");
+                }
+                else {
+                    var nombreExiste = false;
+                    let response = await axios.get('/categoria/validarSiExiste',{
+                        params: {
+                            'nombre': me.nombre,
+                            'id': ((me.tipoAccion == 1) ? 0 : me.categoria_id)
+                        }
+                    }).then(function (response) {
+                        nombreExiste = response.data.exists;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+
+                    if(nombreExiste){
+                        this.errorMostrarMsjCategoria.push("Ya existe una categoría con este nombre.");
+                    }
+                }
 
                 if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
 

@@ -6,6 +6,7 @@ use App\Persona;
 use Illuminate\Support\Facades\DB; //Me permite trabajar con gestion de transacciones
 
 use Illuminate\Http\Request;
+use Auth;
 
 class UserController extends Controller
 {
@@ -23,7 +24,7 @@ class UserController extends Controller
             'personas.num_documento','personas.direccion','personas.telefono',
             'personas.email','users.usuario','users.password',
             'users.condicion','users.idrol','roles.nombre as rol')
-            ->orderBy('personas.id', 'desc')->paginate(6);
+            ->orderBy('personas.id', 'desc');
         }
         else{
             $personas = User::join('personas','users.id','=','personas.id')
@@ -33,9 +34,13 @@ class UserController extends Controller
             'personas.email','users.usuario','users.password',
             'users.condicion','users.idrol','roles.nombre as rol')            
             ->where('personas.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('personas.id', 'desc')->paginate(6);
+            ->orderBy('personas.id', 'desc');
         }
          
+        // Filtro multiempresa 
+        $personas->where('users.idempresa','=', Auth::user()->idempresa);
+
+        $personas = $personas->paginate(6);
  
         return [
             'pagination' => [
@@ -57,11 +62,12 @@ class UserController extends Controller
         try{
             DB::beginTransaction();
             $persona = new Persona();
+            $persona->idempresa = Auth::user()->idempresa;
             $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
-            $persona->num_documento = $request->num_documento;
+            $persona->num_documento = strtoupper($request->num_documento);
             $persona->direccion = strtoupper($request->direccion);
-            $persona->telefono = $request->telefono;
+            $persona->telefono = strtoupper($request->telefono);
             $persona->email = strtoupper($request->email);
             $persona->save();
  
@@ -94,11 +100,12 @@ class UserController extends Controller
  
             $persona = Persona::findOrFail($user->id);
  
+            //$persona->idempresa = Auth::user()->idempresa;
             $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
-            $persona->num_documento = $request->num_documento;
+            $persona->num_documento = strtoupper($request->num_documento);
             $persona->direccion = strtoupper($request->direccion);
-            $persona->telefono = $request->telefono;
+            $persona->telefono = strtoupper($request->telefono);
             $persona->email = strtoupper($request->email);
             $persona->save();
  

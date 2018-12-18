@@ -27,13 +27,19 @@ Route::group(['middleware' => ['auth']], function () {
         return view('contenido/contenido');
     })->name('main');
 
+    Route::get('/departamento/all', 'DepartamentoController@selectDepartamento');
+    Route::get('/provincia/all', 'ProvinciaController@selectProvincia');
+    Route::get('/distrito/all', 'DistritoController@selectDistrito');
+
     Route::group(['middleware' => ['Almacenero']], function () {
         Route::get('/categoria', 'CategoriaController@index');
         Route::post('/categoria/registrar', 'CategoriaController@store');
+        Route::post('/articulo/importarcsv', 'ArticuloController@importcsv');
         Route::put('/categoria/actualizar', 'CategoriaController@update');
         Route::put('/categoria/desactivar', 'CategoriaController@desactivar');
         Route::put('/categoria/activar', 'CategoriaController@activar');
         Route::get('/categoria/selectCategoria', 'CategoriaController@selectCategoria');
+        Route::get('/categoria/validarSiExiste', 'CategoriaController@validarSiExiste');
 
         Route::get('/articulo', 'ArticuloController@index');
         Route::post('/articulo/registrar', 'ArticuloController@store');
@@ -82,9 +88,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/categoria/desactivar', 'CategoriaController@desactivar');
         Route::put('/categoria/activar', 'CategoriaController@activar');
         Route::get('/categoria/selectCategoria', 'CategoriaController@selectCategoria');
+        Route::get('/categoria/validarSiExiste', 'CategoriaController@validarSiExiste');
 
         Route::get('/articulo', 'ArticuloController@index');
         Route::post('/articulo/registrar', 'ArticuloController@store');
+        Route::post('/articulo/importarcsv', 'ArticuloController@importcsv');
         Route::put('/articulo/actualizar', 'ArticuloController@update');
         Route::put('/articulo/desactivar', 'ArticuloController@desactivar');
         Route::put('/articulo/activar', 'ArticuloController@activar');
@@ -93,6 +101,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/articulo/buscarArticuloVenta', 'ArticuloController@buscarArticuloVenta');
         Route::get('/articulo/listarArticuloVenta', 'ArticuloController@listarArticuloVenta');
         Route::get('/articulo/listarPdf', 'ArticuloController@listarPdf')->name('articulos_pdf');
+
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');

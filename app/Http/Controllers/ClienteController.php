@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Persona;
+use Auth;
 
 class ClienteController extends Controller
 {
@@ -15,13 +16,17 @@ class ClienteController extends Controller
         $criterio = $request->criterio;
          
         if ($buscar==''){
-            $personas = Persona::orderBy('id', 'desc')->paginate(6);
+            $personas = Persona::orderBy('id', 'desc');
         }
         else{
-            $personas = Persona::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc')->paginate(6);
+            $personas = Persona::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc');
         }
          
- 
+        // Filtro multiempresa 
+        $personas->where('idempresa','=', Auth::user()->idempresa);
+
+        $personas = $personas->paginate(6);
+
         return [
             'pagination' => [
                 'total'        => $personas->total(),
@@ -39,10 +44,18 @@ class ClienteController extends Controller
         if (!$request->ajax()) return redirect('/');
  
         $filtro = $request->filtro;
-        $clientes = Persona::where('nombre', 'like', '%'. $filtro . '%')
-        ->orWhere('num_documento', 'like', '%'. $filtro . '%')
+        $clientes = Persona::where(function($query) use ($filtro) {
+            $query->where('nombre', 'like', '%'. $filtro . '%')
+            ->orWhere('num_documento', 'like', '%'. $filtro . '%');
+        })
         ->select('id','nombre','num_documento')
-        ->orderBy('nombre', 'asc')->get();
+        ->orderBy('nombre', 'asc');
+
+        // Filtro multiempresa 
+        $clientes->where('idempresa','=', Auth::user()->idempresa);
+
+        // $query = $clientes->toSql();
+        $clientes = $clientes->get();
  
         return ['clientes' => $clientes];
     }
@@ -51,6 +64,7 @@ class ClienteController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $persona = new Persona();
+        $persona->idempresa = Auth::user()->idempresa;
         $persona->nombre = strtoupper($request->nombre);
         $persona->tipo_documento = $request->tipo_documento;
         $persona->num_documento = $request->num_documento;
@@ -65,6 +79,7 @@ class ClienteController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $persona = Persona::findOrFail($request->id);
+        //$persona->idempresa = Auth::user()->idempresa;
         $persona->nombre = strtoupper($request->nombre);
         $persona->tipo_documento = $request->tipo_documento;
         $persona->num_documento = $request->num_documento;

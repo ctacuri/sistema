@@ -31,6 +31,10 @@ Vue.component('consultaventa', require('./components/ConsultaVenta.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
 Vue.component('empresa', require('./components/Empresa.vue'));
 
+Vue.filter('commaformat', function (value) {
+    return (value||'').toString().trim().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+});
+
 const app = new Vue({
     el: '#app',
     data :{

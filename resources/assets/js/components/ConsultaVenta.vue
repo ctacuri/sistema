@@ -137,26 +137,26 @@
                                             <td v-text="detalle.descuento">
                                             </td>
                                             <td>
-                                                {{(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
+                                                {{parseFloat(detalle.precio*detalle.cantidad - detalle.descuento).toFixed(2)}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="4" align="right"><strong>Total Parcial:</strong></td>
-                                            <td>$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}</td>
+                                            <td>$ {{totalParcial=parseFloat(total-totalImpuesto).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="4" align="right"><strong>Total Impuesto:</strong></td>
-                                            <td>$ {{totalImpuesto=((total*impuesto)).toFixed(2)}}</td>
+                                            <td>$ {{totalImpuesto=parseFloat((total*impuesto)).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="4" align="right"><strong>Total Neto:</strong></td>
-                                            <td>$ {{total.toFixed(2)}}</td>
+                                            <td>$ {{parseFloat(total).toFixed(2)}}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
                                             <td colspan="5">
-                                                NO hay artículos agregados
+                                                No hay artículos agregados
                                             </td>
                                         </tr>
                                     </tbody>                                    

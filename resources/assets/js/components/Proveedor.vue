@@ -90,7 +90,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="text-input">Nombre/Empresa (*)</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona">                                        
+                                        <input type="text" v-model="nombre" class="form-control text-uppercase" placeholder="Nombre de la persona">                                        
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -107,37 +107,71 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="text-input">Número</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="num_documento" class="form-control" placeholder="Número de documento">                                        
+                                        <input type="text" v-model="num_documento" class="form-control text-uppercase" placeholder="Número de documento">                                        
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Dirección</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="direccion" class="form-control" placeholder="Dirección">
+                                        <input type="text" v-model="direccion" class="form-control text-uppercase" placeholder="Dirección">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Teléfono</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono">
+                                        <input type="text" v-model="telefono" class="form-control text-uppercase" placeholder="Teléfono">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Email</label>
                                     <div class="col-md-9">
-                                        <input type="email" v-model="email" class="form-control" placeholder="Email">
+                                        <input type="email" v-model="email" class="form-control text-uppercase" placeholder="Email">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Contacto</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="contacto" class="form-control" placeholder="Nombre del contacto">
+                                        <input type="text" v-model="contacto" class="form-control text-uppercase" placeholder="Nombre del contacto">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Teléfono de contacto</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="telefono_contacto" class="form-control" placeholder="Teléfono del contacto">
+                                        <input type="text" v-model="telefono_contacto" class="form-control text-uppercase" placeholder="Teléfono del contacto">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Departamento</label>
+                                    <div class="col-md-9">
+                                        <select v-model="departamento" v-bind:class="{'placeholder': (departamento == 0)}" class="form-control" required="required">
+                                            <option disabled value="0">Departamento</option>
+                                            <option v-for="optDep in fillDepartamentos" v-bind:key="optDep.id" v-bind:value="optDep.id">
+                                                {{ optDep.descripcion }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Provincia</label>
+                                    <div class="col-md-9">
+                                        <select v-model="provincia" v-bind:class="{'placeholder': (provincia == 0)}" class="form-control" required="required">
+                                            <option disabled value="0">Provincia</option>
+                                            <option v-for="optProv in fillProvincias" v-bind:key="optProv.iddepartamento + optProv.id" v-bind:value="optProv.id">
+                                                {{ optProv.descripcion }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Distrito</label>
+                                    <div class="col-md-9">
+                                        <select v-model="distrito" v-bind:class="{'placeholder': (distrito == 0)}" class="form-control" required="required">
+                                            <option disabled value="0">Distrito</option>
+                                            <option v-for="optDis in fillDistritos" v-bind:key="optDis.iddepartamento + optDis.idprovincia + optDis.id" v-bind:value="optDis.id">
+                                                {{ optDis.descripcion }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -174,11 +208,18 @@
                 tipo_documento : 'DNI',
                 num_documento : '',
                 direccion : '',
+                departamento: 0,
+                provincia: 0,
+                distrito: 0,
                 telefono : '',
                 email : '',
                 contacto : '',
                 telefono_contacto : '',
                 arrayPersona : [],
+                fillDepartamentos : [],
+                fillProvincias : [],
+                fillDistritos : [],
+                ubigeo: { departamentos: [], provincias: [], distritos: [], allLoaded: false },
                 modal : 0,
                 tituloModal : '',
                 tipoAccion : 0,
@@ -258,6 +299,9 @@
                     'tipo_documento': this.tipo_documento,
                     'num_documento' : this.num_documento,
                     'direccion' : this.direccion,
+                    'iddepartamento': this.departamento,
+                    'idprovincia': this.provincia,
+                    'iddistrito': this.distrito,
                     'telefono' : this.telefono,
                     'email' : this.email,
                     'contacto': this.contacto,
@@ -282,6 +326,9 @@
                     'tipo_documento': this.tipo_documento,
                     'num_documento' : this.num_documento,
                     'direccion' : this.direccion,
+                    'iddepartamento': this.departamento,
+                    'idprovincia': this.provincia,
+                    'iddistrito': this.distrito,
                     'telefono' : this.telefono,
                     'email' : this.email,
                     'contacto': this.contacto,
@@ -304,63 +351,154 @@
 
                 return this.errorPersona;
             },
+            obtenerUbigeo(){       
+                let me = this;
+
+                axios.get('/departamento/all',{}).then(function (response) {
+                    me.ubigeo.departamentos = response.data.departamentos || [];
+
+                    axios.get('/provincia/all',{}).then(function (response) {
+                        me.ubigeo.provincias = response.data.provincias || [];
+
+                        axios.get('/distrito/all',{}).then(function (response) {
+                            me.ubigeo.distritos = response.data.distritos || [];
+
+                            me.ubigeo.allLoaded = true;
+                            me.fillDepartamentos = me.ubigeo.departamentos;
+
+
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    }); 
+
+                }).catch(function (error) {
+                    console.log(error);
+                }); 
+
+                
+            },
             cerrarModal(){
-                this.modal=0;
-                this.tituloModal='';
-                this.nombre='';
-                this.tipo_documento='RUC';
-                this.num_documento='';
-                this.direccion='';
-                this.telefono='';
-                this.email='';
-                this.contacto='';
-                this.telefono_contacto='';
-                this.errorPersona=0;
+                let me = this;
+
+                me.modal=0;
+                me.tituloModal='';
+                me.nombre='';
+                me.tipo_documento='RUC';
+                me.num_documento='';
+                me.direccion='';
+                me.departamento= 0;
+                me.provincia= 0;
+                me.distrito= 0;
+                me.telefono='';
+                me.email='';
+                me.contacto='';
+                me.telefono_contacto='';
+                me.errorPersona=0;
 
             },
             abrirModal(modelo, accion, data = []){
+                let me = this;
+
+                if(!me.ubigeo.allLoaded)
+                {
+                    return;
+                }
+
                 switch(modelo){
                     case "persona":
                     {
+                        me.loadingModal = true;
                         switch(accion){
                             case 'registrar':
                             {
-                                this.modal = 1;
-                                this.tituloModal = 'Registrar Proveedor';
-                                this.nombre= '';
-                                this.tipo_documento='RUC';
-                                this.num_documento='';
-                                this.direccion='';
-                                this.telefono='';
-                                this.email='';
-                                this.contacto='';
-                                this.telefono_contacto='';
-                                this.tipoAccion = 1;
+                                me.modal = 1;
+                                me.tituloModal = 'Registrar Proveedor';
+                                me.nombre= '';
+                                me.tipo_documento='RUC';
+                                me.num_documento='';
+                                me.direccion='';
+                                me.departamento= 0;
+                                me.provincia= 0;
+                                me.distrito= 0;
+                                me.telefono='';
+                                me.email='';
+                                me.contacto='';
+                                me.telefono_contacto='';
+                                me.tipoAccion = 1;
                                 break;
                             }
                             case 'actualizar':
                             {
                                 //console.log(data);
-                                this.modal=1;
-                                this.tituloModal='Actualizar Proveedor';
-                                this.tipoAccion=2;
-                                this.persona_id=data['id'];
-                                this.nombre = data['nombre'];
-                                this.tipo_documento = data['tipo_documento'];
-                                this.num_documento = data['num_documento'];
-                                this.direccion = data['direccion'];
-                                this.telefono = data['telefono'];
-                                this.email = data['email'];
-                                this.contacto = data['contacto'];
-                                this.telefono_contacto = data['telefono_contacto'];
+                                me.modal=1;
+                                me.tituloModal='Actualizar Proveedor';
+                                me.tipoAccion=2;
+                                me.persona_id=data['id'];
+                                me.nombre = data['nombre'];
+                                me.tipo_documento = data['tipo_documento'];
+                                me.num_documento = data['num_documento'];
+                                me.direccion = data['direccion'];
+                                me.departamento= data['iddepartamento'];
+                                me.provincia= data['idprovincia'];
+                                me.distrito= data['iddistrito'];
+                                me.telefono = data['telefono'];
+                                me.email = data['email'];
+                                me.contacto = data['contacto'];
+                                me.telefono_contacto = data['telefono_contacto'];
                                 break;
                             }
                         }
+                        setTimeout(function(){
+                            me.loadingModal = false;
+                        }.bind(me),500);
                     }
                 }
             }
         },
+        watch: {
+            departamento: function() {
+                let me = this;
+
+                if(me.loadingModal == false){
+                    me.provincia = 0;
+                    me.distrito = 0;
+                }
+
+                me.fillProvincias = [];
+                me.fillDistritos = [];
+
+                if (me.departamento != 0) {
+                    me.ubigeo.provincias.map(function(obj, ind) {
+                        if(me.departamento == obj.iddepartamento){
+                            me.fillProvincias.push(obj);
+                        }
+                    });
+                }
+            },
+            provincia: function() {
+                let me = this;
+
+                if(me.loadingModal == false){
+                    me.distrito = 0;
+                }
+
+                me.fillDistritos = [];
+
+                if (me.provincia != 0) {
+                    me.ubigeo.distritos.map(function(obj, ind) {
+                        if(me.departamento == obj.iddepartamento && me.provincia == obj.idprovincia){
+                            me.fillDistritos.push(obj);
+                        }
+                    });
+                }
+            }
+        },
         mounted() {
+            this.obtenerUbigeo();
             this.listarPersona(1,this.buscar,this.criterio);
         }
     }

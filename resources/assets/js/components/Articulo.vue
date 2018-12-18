@@ -1,175 +1,296 @@
 <template>
-            <main class="main">
-            <!-- Breadcrumb -->
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Escritorio</a></li>
-            </ol>
-            <div class="container-fluid">
-                <!-- Ejemplo de tabla Listado -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Artículos
-                        <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
-                            <i class="icon-doc"></i>&nbsp;Nuevo
-                        </button>
-                        <button type="button" @click="cargarPdf()" class="btn btn-info">
-                            <i class="icon-plus"></i>&nbsp;Reporte
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <select class="form-control col-md-3" v-model="criterio">
-                                      <option value="nombre">Nombre</option>
-                                      <option value="descripcion">Descripción</option>
-                                    </select>
-                                    <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
-                                    <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-                                </div>
+    <main class="main">
+        <!-- Breadcrumb -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Escritorio</a></li>
+        </ol>
+        <div class="container-fluid">
+            <!-- Ejemplo de tabla Listado -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa fa-align-justify"></i> Productos
+                    <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
+                        <i class="icon-doc"></i>&nbsp;Nuevo
+                    </button>
+                    <button type="button" @click="abrirModal('articulo','importar')" class="btn btn-secondary">
+                        <i class="icon-cloud-upload"></i>&nbsp;Importar
+                    </button>
+                    <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-info">
+                        <i class="icon-plus"></i>&nbsp;Categoria
+                    </button>
+                    <button type="button" @click="cargarPdf()" class="btn btn-info">
+                        <i class="icon-notebook"></i>&nbsp;Reporte
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <select class="form-control col-md-3" v-model="criterio">
+                                    <option value="nombre">Nombre</option>
+                                    <option value="descripcion">Descripción</option>
+                                </select>
+                                <input type="text" v-model="buscar" @keyup.enter="listarArticulo(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
+                                <button type="submit" @click="listarArticulo(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                             </div>
                         </div>
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Opciones</th>
-                                    <th>Código</th>
-                                    <th>Nombre</th>
-                                    <th>Categoría</th>
-                                    <th>Precio Venta</th>
-                                    <th>Stock</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                                    <td>
-                                        <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                                          <i class="icon-pencil"></i>
-                                        </button> &nbsp;
-                                        <template v-if="articulo.condicion">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </template>
-                                        <template v-else>
-                                            <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                                                <i class="icon-check"></i>
-                                            </button>
-                                        </template>
-                                    </td>
-                                    <td v-text="articulo.codigo"></td>
-                                    <td v-text="articulo.nombre"></td>
-                                    <td v-text="articulo.nombre_categoria"></td>
-                                    <td v-text="articulo.precio_venta" class="text-right"></td>
-                                    <td v-text="articulo.stock" class="text-right"></td>
-                                    <td v-text="articulo.descripcion"></td>
-                                    <td>
-                                        <div v-if="articulo.condicion">
-                                            <span class="badge badge-success">Activo</span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="badge badge-danger">Desactivado</span>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>                                
-                            </tbody>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                                <li class="page-item" v-if="pagination.current_page > 1">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
-                                </li>
-                                <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
-                                </li>
-                                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                    <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
-                                </li>
-                            </ul>
-                        </nav>
+                    </div>
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Opciones</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio Venta</th>
+                                <!--<th>Stock</th>-->
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                                <td>
+                                    <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                                        <i class="icon-pencil"></i>
+                                    </button> &nbsp;
+                                    <template v-if="articulo.condicion">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                                            <i class="icon-check"></i>
+                                        </button>
+                                    </template>
+                                </td>
+                                <td v-text="articulo.codigo"></td>
+                                <td v-text="articulo.nombre"></td>
+                                <td v-text="articulo.nombre_categoria"></td>
+                                <td v-text="articulo.precio_venta" class="text-right"></td>
+                                <!--<td v-text="articulo.stock" class="text-right"></td>-->
+                                <td v-text="articulo.descripcion"></td>
+                                <td>
+                                    <div v-if="articulo.condicion">
+                                        <span class="badge badge-success">Activo</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Desactivado</span>
+                                    </div>
+                                    
+                                </td>
+                            </tr>                                
+                        </tbody>
+                    </table>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- Fin ejemplo de tabla Listado -->
+        </div>
+
+        <!--Inicio del modal agregar/actualizar-->
+        <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" v-text="tituloModal"></h4>
+                        <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Categoría</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="idcategoria">
+                                        <option value="0" disabled>Seleccione</option>
+                                        <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+                                    </select>                                        
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Código</label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="codigo" class="form-control" placeholder="Código de barras">
+                                    <barcode :value="codigo" :options="{ format: 'EAN-13' }">
+                                        Escriba para generar el código de barras.
+                                    </barcode>                         
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="nombre" class="form-control text-uppercase" placeholder="Nombre de artículo">                                        
+                                </div>
+                            </div>
+
+                            
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Precio Venta</label>
+                                <div class="col-md-9">
+                                    <input type="number" v-model="precio_venta" class="form-control" placeholder="">                                        
+                                </div>
+                            </div>
+                            <!--
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Stock</label>
+                                <div class="col-md-9">
+                                    <input type="number" v-model="stock" class="form-control" placeholder="">                                        
+                                </div>
+                            </div>
+                            -->
+                            
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
+                                <div class="col-md-9">
+                                    <input type="email" v-model="descripcion" class="form-control text-uppercase" placeholder="Ingrese descripción">
+                                </div>
+                            </div>
+                            <div v-show="errorArticulo" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
                     </div>
                 </div>
-                <!-- Fin ejemplo de tabla Listado -->
+                <!-- /.modal-content -->
             </div>
-            <!--Inicio del modal agregar/actualizar-->
-            <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-                <div class="modal-dialog modal-primary modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" v-text="tituloModal"></h4>
-                            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
-                              <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Categoría</label>
-                                    <div class="col-md-9">
-                                        <select class="form-control" v-model="idcategoria">
-                                            <option value="0" disabled>Seleccione</option>
-                                            <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
-                                        </select>                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Código</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="codigo" class="form-control" placeholder="Código de barras">
-                                        <barcode :value="codigo" :options="{ format: 'EAN-13' }">
-                                            Generando mcodigo de barras.
-                                        </barcode>                         
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de artículo">                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Precio Venta</label>
-                                    <div class="col-md-9">
-                                        <input type="number" v-model="precio_venta" class="form-control" placeholder="">                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Stock</label>
-                                    <div class="col-md-9">
-                                        <input type="number" v-model="stock" class="form-control" placeholder="">                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
-                                    <div class="col-md-9">
-                                        <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripción">
-                                    </div>
-                                </div>
-                                <div v-show="errorArticulo" class="form-group row div-error">
-                                    <div class="text-center text-error">
-                                        <div v-for="error in errorMostrarMsjArticulo" :key="error" v-text="error">
+            <!-- /.modal-dialog -->
+        </div>
+        <!--Fin del modal-->
 
-                                        </div>
-                                    </div>
-                                </div>
 
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarArticulo()">Guardar</button>
-                            <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarArticulo()">Actualizar</button>
-                        </div>
+        <!--Inicio del modal importar articulos  -->
+        <div class="modal fade" tabindex="-1" :class="{'mostrar' : modalImportar}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" v-text="tituloModalImportar"></h4>
+                        <button type="button" v-if="!procesandoImportacion" class="close" @click="cerrarModalImportar()" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
                     </div>
-                    <!-- /.modal-content -->
+                    <div class="modal-body">
+                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <p>Descargue el <a href="formatos/FORMATO-PRODUCTOS.csv" target="_blank">formato de carga</a> y llénelo con los productos a importar. El archivo deberá pesar máximo 2MB.</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Archivo CSV a importar</label>
+                                <div class="col-md-9">
+                                    <input type="file" id="file" ref="file" class="form-control" v-on:change="validarArchivo()"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Archivo CSV a importar</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" v-model="delimitador">
+                                        <option value=",">coma ( , )</option>
+                                        <option value=";">punto y coma ( ; )</option>
+                                    </select>       
+                                </div>
+                            </div>
+                            <div v-show="errorImportar" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjImportar" :key="error" v-text="error">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" v-bind:disabled="procesandoImportacion" class="btn btn-secondary" @click="cerrarModalImportar()">Cerrar</button>
+                        <button type="button" v-bind:disabled="procesandoImportacion" class="btn btn-primary" v-on:click="procesarImportar()">
+                            <span v-if="!procesandoImportacion">Procesar</span>
+                            <span v-else class="spinner">
+                                <span class="bounce1"></span>
+                                <span class="bounce2"></span>
+                                <span class="bounce3"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
-                <!-- /.modal-dialog -->
+                <!-- /.modal-content -->
             </div>
-            <!--Fin del modal-->
-        </main>
+            <!-- /.modal-dialog -->
+        </div>
+        <!--Fin del modal importar articulos -->
+
+
+        <!--Inicio del modal agregar/actualizar categoria-->
+        <div class="modal fade" tabindex="-1" :class="{'mostrar' : modalCategoria}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" v-text="tituloModal"></h4>
+                        <button type="button" class="close" @click="cerrarModalCategoria()" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="nombre" class="form-control text-uppercase" placeholder="Nombre de categoría">
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
+                                <div class="col-md-9">
+                                    <input type="email" v-model="descripcion" class="form-control text-uppercase" placeholder="Ingrese descripción">
+                                </div>
+                            </div>
+                            <div v-show="errorCategoria" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModalCategoria()">Cerrar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarCategoria()">Guardar</button>
+                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizarCategoria()">Actualizar</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!--Fin del modal categoria-->
+    </main>
 </template>
 
 <script>
@@ -191,6 +312,20 @@
                 tipoAccion : 0,
                 errorArticulo : 0,
                 errorMostrarMsjArticulo : [],
+
+                procesandoImportacion: false,
+                archivo: null,
+                delimitador: ',',
+                modalImportar : 0,
+                tituloModalImportar : '',
+                errorImportar : 0,
+                errorMostrarMsjImportar : [],
+
+                modalCategoria : 0,
+                tituloModalCategoria : '',
+                errorCategoria : 0,
+                errorMostrarMsjCategoria : [],
+
                 pagination : {
                     'total' : 0,
                     'current_page' : 0,
@@ -315,6 +450,92 @@
                     console.log(error);
                 }); 
             },
+
+            procesarImportar(){
+                let me = this;
+
+                if(me.procesandoImportacion){
+                    return;
+                }
+
+                me.archivo = me.$refs.file.files[0];
+                if (me.validarImportar()){
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append('archivo', me.archivo);
+                formData.append('delimitador', me.delimitador);
+
+                me.procesandoImportacion = true;
+
+                axios.post( '/articulo/importarcsv', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(function(response){
+                    if(response.data.success == true){
+                        
+                        swal(
+                        'Importación finalizada!',
+                        response.data.message,
+                        'success'
+                        )
+
+                        me.cerrarModalImportar();
+                        me.listarArticulo(1,'','nombre');
+                    }
+                    else{
+                        swal(
+                        'Error en la importación!',
+                        response.data.message,
+                        'error'
+                        )
+                    }
+                    me.procesandoImportacion = false;
+                })
+                .catch(function(error){
+                    console.log(error);
+                     me.procesandoImportacion = false;
+                });
+            },
+
+            registrarCategoria(){
+                if (this.validarCategoria()){
+                    return;
+                }
+                
+                let me = this;
+
+                axios.post('/categoria/registrar',{
+                    'nombre': this.nombre,
+                    'descripcion': this.descripcion
+                }).then(function (response) {
+                    me.cerrarModal();
+                    me.listarCategoria(1,'','nombre');
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            actualizarCategoria(){
+               if (this.validarCategoria()){
+                    return;
+                }
+                
+                let me = this;
+
+                axios.put('/categoria/actualizar',{
+                    'nombre': this.nombre,
+                    'descripcion': this.descripcion,
+                    'id': this.categoria_id
+                }).then(function (response) {
+                    me.cerrarModal();
+                    me.listarCategoria(1,'','nombre');
+                }).catch(function (error) {
+                    console.log(error);
+                }); 
+            },
+
             desactivarArticulo(id){
                swal({
                 title: 'Esta seguro de desactivar este artículo?',
@@ -399,12 +620,50 @@
 
                 if (this.idcategoria==0) this.errorMostrarMsjArticulo.push("Seleccione una categoría.");
                 if (!this.nombre) this.errorMostrarMsjArticulo.push("El nombre del artículo no puede estar vacío.");
-                if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
+                //if (!this.stock) this.errorMostrarMsjArticulo.push("El stock del artículo debe ser un número y no puede estar vacío.");
                 if (!this.precio_venta) this.errorMostrarMsjArticulo.push("El precio venta del artículo debe ser un número y no puede estar vacío.");
 
                 if (this.errorMostrarMsjArticulo.length) this.errorArticulo = 1;
 
                 return this.errorArticulo;
+            },
+            validarArchivo(){
+                var inputfile = this.$refs.file.files[0];
+                var maxSize = 2000000;
+                if(inputfile)
+                {
+                    console.log(inputfile);
+                    if (inputfile.name.substr(-4) != '.csv' || inputfile.size > maxSize) 
+                    {
+                        swal(
+                        'Archivo no válido!',
+                        'El archivo debe tener la extensión ".csv" y pesar máximo 2MB.',
+                        'error'
+                        );
+                        this.$refs.file.value = null;
+                    }
+                
+                }
+            },
+            validarImportar(){
+                this.errorImportar=0;
+                this.errorMostrarMsjImportar =[];
+                console.log(this.archivo);
+                if (this.archivo==null) this.errorMostrarMsjImportar.push("Seleccione un archivo.");
+                                
+                if (this.errorMostrarMsjImportar.length) this.errorImportar = 1;
+
+                return this.errorImportar;
+            },
+            validarCategoria(){
+                this.errorCategoria=0;
+                this.errorMostrarMsjCategoria =[];
+
+                if (!this.nombre) this.errorMostrarMsjCategoria.push("El nombre de la categoría no puede estar vacío.");
+
+                if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
+
+                return this.errorCategoria;
             },
             cerrarModal(){
                 this.modal=0;
@@ -416,8 +675,19 @@
                 this.precio_venta = 0;
                 this.stock = 0;
                 this.descripcion = '';
-		        this.errorArticulo=0;
+		        this.errorArticulo = 0;
             },
+            cerrarModalImportar(){
+                this.modalImportar=0;
+                this.tituloModalImportar='';
+                this.archivo=null;
+            },
+            cerrarModalCategoria(){
+                this.modalCategoria=0;
+                this.tituloModalCategoria='';
+                this.nombreCategoria='';
+                this.descripcionCategoria='';
+            },           
             abrirModal(modelo, accion, data = []){
                 switch(modelo){
                     case "articulo":
@@ -426,7 +696,7 @@
                             case 'registrar':
                             {
                                 this.modal = 1;
-                                this.tituloModal = 'Registrar Artículo';
+                                this.tituloModal = 'Registrar Producto';
                                 this.idcategoria=0;
                                 this.nombre_categoria='';
                                 this.codigo='';
@@ -440,20 +710,58 @@
                             case 'actualizar':
                             {
                                 //console.log(data);
-                                this.modal=1;
-                                this.tituloModal='Actualizar Artículo';
-                                this.tipoAccion=2;
-                                this.articulo_id=data['id'];
-                                this.idcategoria=data['idcategoria'];
-                                this.codigo=data['codigo'];
+                                this.modal = 1;
+                                this.tituloModal = 'Actualizar Producto';
+                                this.tipoAccion = 2;
+                                this.articulo_id = data['id'];
+                                this.idcategoria = data['idcategoria'];
+                                this.codigo = data['codigo'];
                                 this.nombre = data['nombre'];
-                                this.stock=data['stock'];
-                                this.precio_venta=data['precio_venta'];
-                                this.descripcion= data['descripcion'];
+                                this.stock = data['stock'];
+                                this.precio_venta = data['precio_venta'];
+                                this.descripcion = data['descripcion'];
+                                break;
+                            }
+                            case 'importar':
+                            {
+                                //console.log(data);
+                                this.modalImportar = 1;
+                                this.tituloModalImportar = 'Importar Productos';
+                                this.tipoAccion = 1;
+                                this.archivo = null;
                                 break;
                             }
                         }
+                        break;
                     }
+
+                    case "categoria":
+                    {
+                        switch(accion){
+                            case 'registrar':
+                            {
+                                this.modalCategoria = 1;
+                                this.tituloModalCategoria = 'Registrar Categoría';
+                                this.nombreCategoria = '';
+                                this.descripcionCategoria = '';
+                                this.tipoAccion = 1;
+                                break;
+                            }
+                            case 'actualizar':
+                            {
+                                //console.log(data);
+                                this.modalCategoria=1;
+                                this.tituloModalCategoria='Actualizar categoría';
+                                this.tipoAccion=2;
+                                this.categoria_id=data['id'];
+                                this.nombreCategoria = data['nombre'];
+                                this.descripcionCategoria = data['descripcion'];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+
                 }
                 this.selectCategoria();
             }

@@ -147,9 +147,9 @@
                         <div class="form-group row border">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Artículo <span style="color:red;" v-show="idarticulo==0">(*Seleccione)</span></label>
+                                    <label>Producto <span style="color:red;" v-show="idarticulo==0">(*Seleccione)</span></label>
                                     <div class="form-inline">
-                                        <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()" placeholder="Ingrese artículo" size="12">
+                                        <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarArticulo()" placeholder="Ingrese producto" size="12">
                                         <button @click="abrirModal()" class="btn btn-primary">...</button>
                                         <input type="text" readonly class="form-control" v-model="articulo">
                                     </div>                                    
@@ -185,7 +185,7 @@
                                     <thead>
                                         <tr>
                                             <th>Opciones</th>
-                                            <th>Artículo</th>
+                                            <th>Producto</th>
                                             <th>Precio</th>
                                             <th>Cantidad</th>
                                             <th>Descuento</th>
@@ -213,26 +213,26 @@
                                                 <input v-model="detalle.descuento" type="number" class="form-control">
                                             </td>
                                             <td class="text-right">
-                                                {{(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
+                                                {{parseFloat(detalle.precio*detalle.cantidad-detalle.descuento).toFixed(2)}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Parcial:</strong></td>
-                                            <td class="text-right">$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}</td>
+                                            <td class="text-right">$ {{totalParcial=parseFloat(total-totalImpuesto).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Impuesto:</strong></td>
-                                            <td class="text-right">$ {{totalImpuesto=((total*impuesto)/(1+impuesto)).toFixed(2)}}</td>
+                                            <td class="text-right">$ {{totalImpuesto=parseFloat((total*impuesto)/(1+impuesto)).toFixed(2)}}</td>
                                         </tr>
                                         <tr style="background-color: #CEECF5;">
                                             <td colspan="5" align="right"><strong>Total Neto:</strong></td>
-                                            <td class="text-right">$ {{total=calcularTotal.toFixed(2)}}</td>
+                                            <td class="text-right">$ {{total=parseFloat(calcularTotal).toFixed(2)}}</td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
                                             <td colspan="6">
-                                                NO hay artículos agregados
+                                                No hay productos agregados
                                             </td>
                                         </tr>
                                     </tbody>                                    
@@ -286,7 +286,7 @@
                                 <table class="table table-bordered table-striped table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Artículo</th>
+                                            <th>Producto</th>
                                             <th>Precio</th>
                                             <th>Cantidad</th>
                                             <th>Descuento</th>
@@ -323,7 +323,7 @@
                                     <tbody v-else>
                                         <tr>
                                             <td colspan="5">
-                                                NO hay artículos agregados
+                                                No hay productos agregados
                                             </td>
                                         </tr>
                                     </tbody>                                    
@@ -552,7 +552,7 @@
                         me.stock=me.arrayArticulo[0]['stock'];
                     }
                     else{
-                        me.articulo='No existe artículo';
+                        me.articulo='No existe producto';
                         me.idarticulo=0;
                     }
                 })
@@ -592,7 +592,7 @@
                         swal({
                             type: 'error',
                             title: 'Error...',
-                            text: 'Ese artículo ya se encuentra agregado!',
+                            text: 'Ese producto ya se encuentra agregado!',
                             })
                     }else{
                        if(me.cantidad>me.stock){
@@ -631,7 +631,7 @@
                         swal({
                             type: 'error',
                             title: 'Error...',
-                            text: 'Ese artículo ya se encuentra agregado!',
+                            text: 'Ese producto ya se encuentra agregado!',
                             })
                     }
                     else{
@@ -779,7 +779,7 @@
             abrirModal(){               
                 this.arrayArticulo=[];
                 this.modal = 1;
-                this.tituloModal = 'Seleccione uno o varios artículos';
+                this.tituloModal = 'Seleccione uno o varios productos';
             },
             desactivarVenta(id){
                swal({

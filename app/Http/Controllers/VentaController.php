@@ -9,6 +9,7 @@ use App\Venta;
 use App\DetalleVenta;
 use App\User;
 use App\Notifications\NotifyAdmin;
+use Auth;
 
 class VentaController extends Controller
 {
@@ -25,7 +26,7 @@ class VentaController extends Controller
             ->select('ventas.id','ventas.tipo_comprobante','ventas.serie_comprobante',
             'ventas.num_comprobante','ventas.fecha_hora','ventas.impuesto','ventas.total',
             'ventas.estado','personas.nombre','users.usuario')
-            ->orderBy('ventas.id', 'desc')->paginate(6);
+            ->orderBy('ventas.id', 'desc');
         }
         else{
             $ventas = Venta::join('personas','ventas.idcliente','=','personas.id')
@@ -34,8 +35,13 @@ class VentaController extends Controller
             'ventas.num_comprobante','ventas.fecha_hora','ventas.impuesto','ventas.total',
             'ventas.estado','personas.nombre','users.usuario')
             ->where('ventas.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('ventas.id', 'desc')->paginate(6);
+            ->orderBy('ventas.id', 'desc');
         }
+
+         // Filtro multiempresa 
+         $ventas->where('ventas.idempresa','=', Auth::user()->idempresa);
+
+         $ventas = $ventas->paginate(6);
          
         return [
             'pagination' => [
@@ -59,8 +65,13 @@ class VentaController extends Controller
         'ventas.num_comprobante','ventas.fecha_hora','ventas.impuesto','ventas.total',
         'ventas.estado','personas.nombre','users.usuario')
         ->where('ventas.id','=',$id)
-        ->orderBy('ventas.id', 'desc')->take(1)->get();
+        ->orderBy('ventas.id', 'desc');
          
+        // Filtro multiempresa 
+        $venta->where('ventas.idempresa','=', Auth::user()->idempresa);
+    
+        $venta = $venta->take(1)->get();
+
         return ['venta' => $venta];
     }
     public function obtenerDetalles(Request $request){
@@ -71,8 +82,13 @@ class VentaController extends Controller
         ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
         'articulos.nombre as articulo')
         ->where('detalle_ventas.idventa','=',$id)
-        ->orderBy('detalle_ventas.id', 'desc')->get();
-         
+        ->orderBy('detalle_ventas.id', 'desc');
+    
+        // Filtro multiempresa 
+        $detalles->where('articulos.idempresa','=', Auth::user()->idempresa);
+            
+        $detalles = $detalles->get();
+
         return ['detalles' => $detalles];
     }
     public function pdf(Request $request, $id){
@@ -83,7 +99,13 @@ class VentaController extends Controller
         'ventas.estado','personas.nombre','personas.tipo_documento','personas.num_documento',
         'personas.direccion', 'personas.email','personas.telefono','users.usuario')
         ->where('ventas.id','=',$id)
-        ->orderBy('ventas.id', 'desc')->take(1)->get();
+        ->orderBy('ventas.id', 'desc');
+
+        // Filtro multiempresa 
+        $venta->where('ventas.idempresa','=', Auth::user()->idempresa);
+
+        $venta = $venta->take(1)->get();
+        
 
         $detalles = DetalleVenta::join('articulos','detalle_ventas.idarticulo','=','articulos.id')
         ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
@@ -106,6 +128,7 @@ class VentaController extends Controller
             $mytime= Carbon::now('America/Lima');
  
             $venta = new Venta();
+            $venta->idempresa = Auth::user()->idempresa;
             $venta->idcliente = $request->idcliente;
             $venta->idusuario = \Auth::user()->id;
             $venta->tipo_comprobante = $request->tipo_comprobante;

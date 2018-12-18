@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Empresa;
+use Auth;
 
 class EmpresaController extends Controller
 {
@@ -16,10 +17,15 @@ class EmpresaController extends Controller
         $criterio = $request->criterio;
 
         if($buscar==''){
-            $empresas = Empresa::orderBy('id', 'desc')->paginate(6);
+            $empresas = Empresa::orderBy('id', 'desc');
         }else{
-            $empresas = Empresa::where($criterio, 'like', '%'.$buscar.'%')->orderBy('id', 'desc')->paginate(6);
+            $empresas = Empresa::where($criterio, 'like', '%'.$buscar.'%')->orderBy('id', 'desc');
         }
+
+        // Filtro multiempresa 
+        $empresas->where('id','=', Auth::user()->idempresa);
+
+        $empresas = $empresas->paginate(6);
  
         return [
             'pagination' => [
@@ -48,22 +54,28 @@ class EmpresaController extends Controller
         $empresa->ruc = $request->ruc;
         $empresa->nombre = strtoupper($request->nombre);
         $empresa->direccion = strtoupper($request->direccion);
-        $empresa->telefono = $request->telefono;
+        $empresa->iddepartamento = strtoupper($request->iddepartamento);
+        $empresa->idprovincia = strtoupper($request->idprovincia);
+        $empresa->iddistrito = strtoupper($request->iddistrito);
+        $empresa->telefono = strtoupper($request->telefono);
         $empresa->email = strtoupper($request->email);
         $empresa->condicion = '1';
         $empresa->save();
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
         $empresa = Empresa::findOrFail($request->id);
         $empresa->ruc = $request->ruc;
-        $empresa->nombre = $request->nombre;
-        $empresa->direccion = $request->direccion;
-        $empresa->telefono = $request->telefono;
-        $empresa->email = $request->email;
-        $empresa->condicion = '1';
+        $empresa->nombre = strtoupper($request->nombre);
+        $empresa->direccion = strtoupper($request->direccion);
+        $empresa->iddepartamento = strtoupper($request->iddepartamento);
+        $empresa->idprovincia = strtoupper($request->idprovincia);
+        $empresa->iddistrito = strtoupper($request->iddistrito);
+        $empresa->telefono = strtoupper($request->telefono);
+        $empresa->email = strtolower($request->email);
+        //$empresa->condicion = '1';
         $empresa->save();
     }
 

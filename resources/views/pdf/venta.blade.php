@@ -162,7 +162,7 @@
                     <tbody>
                         <tr>
                             <td>{{$v->usuario}}</td>
-                            <td>{{$v->created_at}}</td>
+                            <td>{{ date('d-m-Y', strtotime($v->created_at)) }}</td>
                         </tr>
                     </tbody>
                 </table>

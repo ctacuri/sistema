@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Proveedor;
 use App\Persona;
+use Auth;
 
 class ProveedorController extends Controller
 {
@@ -21,18 +22,24 @@ class ProveedorController extends Controller
             $personas = Proveedor::join('personas','proveedores.id','=','personas.id')
             ->select('personas.id','personas.nombre','personas.tipo_documento',
             'personas.num_documento','personas.direccion','personas.telefono',
-            'personas.email','proveedores.contacto','proveedores.telefono_contacto')
-            ->orderBy('personas.id', 'desc')->paginate(6);
+            'personas.email','proveedores.contacto','proveedores.telefono_contacto',
+            'proveedores.iddepartamento','proveedores.idprovincia','proveedores.iddistrito')
+            ->orderBy('personas.id', 'desc');
         }
         else{
             $personas = Proveedor::join('personas','proveedores.id','=','personas.id')
             ->select('personas.id','personas.nombre','personas.tipo_documento',
             'personas.num_documento','personas.direccion','personas.telefono',
-            'personas.email','proveedores.contacto','proveedores.telefono_contacto')            
+            'personas.email','proveedores.contacto','proveedores.telefono_contacto',
+            'proveedores.iddepartamento','proveedores.idprovincia','proveedores.iddistrito')            
             ->where('personas.'.$criterio, 'like', '%'. $buscar . '%')
-            ->orderBy('personas.id', 'desc')->paginate(6);
+            ->orderBy('personas.id', 'desc');
         }
          
+        // Filtro multiempresa 
+        $personas->where('personas.idempresa','=', Auth::user()->idempresa);
+
+        $personas = $personas->paginate(6);
  
         return [
             'pagination' => [
@@ -52,11 +59,20 @@ class ProveedorController extends Controller
  
         $filtro = $request->filtro;
         $proveedores = Proveedor::join('personas','proveedores.id','=','personas.id')
-        ->where('personas.nombre', 'like', '%'. $filtro . '%')
-        ->orWhere('personas.num_documento', 'like', '%'. $filtro . '%')
-        ->select('personas.id','personas.nombre','personas.num_documento')
-        ->orderBy('personas.nombre', 'asc')->get();
- 
+        ->where(function($query) use ($filtro) {
+            $query->where('personas.nombre', 'like', '%'. $filtro . '%')
+            ->orWhere('personas.num_documento', 'like', '%'. $filtro . '%')
+            ->orWhere('proveedores.contacto', 'like', '%'. $filtro . '%');
+        })
+        ->select('personas.id','personas.nombre','personas.num_documento', 'proveedores.contacto')
+        ->orderBy('personas.nombre', 'asc');
+        
+        // Filtro multiempresa 
+        $proveedores->where('personas.idempresa','=', Auth::user()->idempresa);
+
+        //$query = $proveedores->toSql();
+        $proveedores = $proveedores->get();
+
         return ['proveedores' => $proveedores];
     }
   
@@ -66,18 +82,23 @@ class ProveedorController extends Controller
          
         try{
             DB::beginTransaction();
-            $persona = new Persona();
+            $persona = new Persona();           
+            $persona->idempresa = Auth::user()->idempresa;
             $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
-            $persona->num_documento = $request->num_documento;
+            $persona->num_documento = strtoupper($request->num_documento);
             $persona->direccion = strtoupper($request->direccion);
-            $persona->telefono = $request->telefono;
+            $persona->telefono = strtoupper($request->telefono);
             $persona->email = strtoupper($request->email);
             $persona->save();
  
             $proveedor = new Proveedor();
+            $proveedor->idempresa = Auth::user()->idempresa;
             $proveedor->contacto = strtoupper($request->contacto);
-            $proveedor->telefono_contacto = $request->telefono_contacto;
+            $proveedor->telefono_contacto = strtoupper($request->telefono_contacto);
+            $proveedor->iddepartamento = strtoupper($request->iddepartamento);
+            $proveedor->idprovincia = strtoupper($request->idprovincia);
+            $proveedor->iddistrito = strtoupper($request->iddistrito);
             $proveedor->id = $persona->id;
             $proveedor->save();
  
@@ -100,7 +121,7 @@ class ProveedorController extends Controller
             $proveedor = Proveedor::findOrFail($request->id);
  
             $persona = Persona::findOrFail($proveedor->id);
- 
+            //$persona->idempresa = Auth::user()->idempresa;
             $persona->nombre = strtoupper($request->nombre);
             $persona->tipo_documento = $request->tipo_documento;
             $persona->num_documento = $request->num_documento;
@@ -109,9 +130,12 @@ class ProveedorController extends Controller
             $persona->email = strtoupper($request->email);
             $persona->save();
  
-             
+            //$proveedor->idempresa = Auth::user()->idempresa;
             $proveedor->contacto = strtoupper($request->contacto);
             $proveedor->telefono_contacto = $request->telefono_contacto;
+            $proveedor->iddepartamento = strtoupper($request->iddepartamento);
+            $proveedor->idprovincia = strtoupper($request->idprovincia);
+            $proveedor->iddistrito = strtoupper($request->iddistrito);
             $proveedor->save();
  
             DB::commit();

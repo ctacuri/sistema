@@ -12,6 +12,6 @@ class Rol extends Model
 
     public function users()
     {
-        return $this->hasMany('App\User'); //Un rol puede tener varios usuarios
+        return $this->hasMany('App\User','idrol'); //Un rol puede tener varios usuarios
     }
 }

@@ -9,6 +9,7 @@ use App\Ingreso;
 use App\DetalleIngreso;
 use App\User;
 use App\Notifications\NotifyAdmin;
+use Auth;
 
 class IngresoController extends Controller
 {
@@ -25,7 +26,7 @@ class IngresoController extends Controller
             ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.serie_comprobante',
             'ingresos.num_comprobante','ingresos.fecha_hora','ingresos.impuesto','ingresos.total',
             'ingresos.estado','personas.nombre','users.usuario')
-            ->orderBy('ingresos.id', 'desc')->paginate(6);
+            ->orderBy('ingresos.id', 'desc');
         }
         else{
             $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
@@ -33,9 +34,14 @@ class IngresoController extends Controller
             ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.serie_comprobante',
             'ingresos.num_comprobante','ingresos.fecha_hora','ingresos.impuesto','ingresos.total',
             'ingresos.estado','personas.nombre','users.usuario')
-            ->where('ingresos.'.$criterio, 'like', '%'. $buscar . '%')->orderBy('ingresos.id', 'desc')->paginate(6);
+            ->where('ingresos.'.$criterio, 'like', '%'. $buscar . '%')->orderBy('ingresos.id', 'desc');
         }
          
+        // Filtro multiempresa 
+        $ingresos->where('ingresos.idempresa','=', Auth::user()->idempresa);
+
+        $ingresos = $ingresos->paginate(6);
+        
         return [
             'pagination' => [
                 'total'        => $ingresos->total(),
@@ -58,7 +64,12 @@ class IngresoController extends Controller
         'ingresos.num_comprobante','ingresos.fecha_hora','ingresos.impuesto','ingresos.total',
         'ingresos.estado','personas.nombre','users.usuario')
         ->where('ingresos.id','=',$id)
-        ->orderBy('ingresos.id', 'desc')->take(1)->get();
+        ->orderBy('ingresos.id', 'desc');
+        
+        // Filtro multiempresa 
+        $ingreso->where('ingresos.idempresa','=', Auth::user()->idempresa);
+        
+        $ingreso = $ingreso->take(1)->get();
          
         return ['ingreso' => $ingreso];
     }
@@ -69,8 +80,13 @@ class IngresoController extends Controller
         $detalles = DetalleIngreso::join('articulos','detalle_ingresos.idarticulo','=','articulos.id')
         ->select('detalle_ingresos.cantidad','detalle_ingresos.precio','articulos.nombre as articulo')
         ->where('detalle_ingresos.idingreso','=',$id)
-        ->orderBy('detalle_ingresos.id', 'desc')->get();
+        ->orderBy('detalle_ingresos.id', 'desc');
          
+        // Filtro multiempresa 
+        $detalles->where('articulos.idempresa','=', Auth::user()->idempresa);
+                
+        $detalles = $detalles->get();
+        
         return ['detalles' => $detalles];
     }
     public function store(Request $request)
@@ -83,8 +99,9 @@ class IngresoController extends Controller
             $mytime= Carbon::now('America/Lima');
  
             $ingreso = new Ingreso();
+            $ingreso->idempresa = Auth::user()->idempresa;
             $ingreso->idproveedor = $request->idproveedor;
-            $ingreso->idusuario = \Auth::user()->id;
+            $ingreso->idusuario = Auth::user()->id;
             $ingreso->tipo_comprobante = $request->tipo_comprobante;
             $ingreso->serie_comprobante = $request->serie_comprobante;
             $ingreso->num_comprobante = $request->num_comprobante;

@@ -10,14 +10,26 @@
             <div class="card-body">
               <h1>Acceder</h1>
               <p class="text-muted">Control de acceso al sistema</p>
-              <div class="form-group mb-3{{$errors->has('usuario' ? 'is-invalid' : '')}}">
+              <div class="form-group mb-3">
+                <span class="input-group-addon"><i class="icon-briefcase"></i></span>
+                <select name="empresa" id="empresa" class="form-control {{$errors->has('empresa') ? 'is-invalid' : ''}}" required="required">
+                  <option value="">Empresa</option>
+                  @foreach($arrayEmpresas as $empresa)
+                  <option value="{{ $empresa->id }}" {{ (old('empresa') == $empresa->id) ? 'selected' : '' }}>
+                      {{ $empresa->nombre }}
+                  </option>
+                  @endforeach  
+                </select>
+                {!!$errors->first('empresa', '<span class="invalid-feedback">:message</span>')!!}
+              </div>
+              <div class="form-group mb-3">
                 <span class="input-group-addon"><i class="icon-user"></i></span>
-                <input type="text" value="{{old('usuario')}}" name="usuario" id="usuario" class="form-control" placeholder="Usuario">
+                <input type="text" value="{{old('usuario')}}" name="usuario" id="usuario" class="form-control {{$errors->has('usuario') ? 'is-invalid' : ''}}" placeholder="Usuario" required="required">
                 {!!$errors->first('usuario', '<span class="invalid-feedback">:message</span>')!!}
               </div>
-              <div class="form-group mb-4{{$errors->has('password' ? 'is-invalid' : '')}}">
+              <div class="form-group mb-4">
                 <span class="input-group-addon"><i class="icon-lock"></i></span>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                <input type="password" name="password" id="password" class="form-control {{$errors->has('password') ? 'is-invalid' : ''}}" placeholder="Password" required="required">
                 {!!$errors->first('password','<span class="invalid-feedback">:message</span>')!!}
               </div>
               <div class="row">
@@ -33,6 +45,8 @@
               <div>
                 <h2>Sistema de Gestion Empresarial</h2>
                 <p>Sistema de gestion de compras, ventas y productos </p>
+                <BR>
+                <img src="../img/logo2.png" style="display: inline-block; width: 155px; height: 55px;">
               </div>
             </div>
           </div>

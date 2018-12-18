@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'usuario', 'password','condicion','idrol'
+        'id', 'idempresa', 'usuario', 'password', 'idrol', 'condicion'
     ];
 
     public $timestamps = false;
@@ -28,12 +28,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token'
     ];
-
-    public function rol(){
-        return $this->belongsTo('App\Rol'); //Un usuario pertenece a un Rol
-    }
  
     public function persona(){
-        return $this->belongsTo('App\Persona'); //Un usuario hace referencia a uan persona
+        return $this->hasOne('App\Persona','id'); //Un usuario hace referencia a uan persona
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo('App\Empresa','idempresa'); //Un usuario pertenece a una empresa
+    }
+
+    public function rol(){
+        return $this->belongsTo('App\Rol','idrol'); //Un usuario pertenece a un Rol
     }
 }

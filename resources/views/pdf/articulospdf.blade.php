@@ -82,7 +82,7 @@
 </head>
 <body>
     <div>
-        <h3>Lista de Artículos <span class="derecha">{{now()}}</span></h3>
+        <h3>Lista de Artículos <span class="derecha">{{ date('d-m-Y', strtotime(now())) }}</span></h3>
     </div>
     <div>
         <table class="table table-bordered table-striped table-sm">
@@ -102,7 +102,7 @@
                 <tr>
                     <td>{{$a->codigo}}</td>
                     <td>{{$a->nombre}}</td>
-                    <td>{{$a->categoria}}</td>
+                    <td>{{$a->categoria->nombre}}</td>
                     <td>{{$a->precio_venta}}</td>
                     <td>{{$a->stock}}</td>
                     <td>{{$a->descripcion}}</td>

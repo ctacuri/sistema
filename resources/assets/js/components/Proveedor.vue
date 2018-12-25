@@ -9,9 +9,11 @@
                 <div class="card">
                     <div class="card-header">
                         <i class="fa fa-align-justify"></i> Proveedores
-                        <button type="button" @click="abrirModal('persona','registrar')" class="btn btn-secondary">
-                            <i class="icon-plus"></i>&nbsp;Nuevo
-                        </button>
+                        <template v-if="$parent.granted['AGREGAR_PROVEEDORES']">
+                            <button type="button" @click="abrirModal('persona','registrar')" class="btn btn-secondary">
+                                <i class="icon-plus"></i>&nbsp;Nuevo
+                            </button>
+                        </template>
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
@@ -44,9 +46,11 @@
                             <tbody>
                                 <tr v-for="persona in arrayPersona" :key="persona.id">
                                     <td>
-                                        <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
-                                          <i class="icon-pencil"></i>
-                                        </button>
+                                        <template v-if="$parent.granted['ACTUALIZAR_PROVEEDORES']">
+                                            <button type="button" @click="abrirModal('persona','actualizar',persona)" class="btn btn-warning btn-sm">
+                                            <i class="icon-pencil"></i>
+                                            </button>
+                                        </template>
                                     </td>
                                     <td v-text="persona.nombre"></td>
                                     <td v-text="persona.tipo_documento"></td>

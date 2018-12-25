@@ -79,7 +79,7 @@ class DistritoController extends Controller
         $distrito = Distrito::findOrFail($request->id);
         $distrito->iddepartamento = $request->iddepartamento;
         $distrito->idprovincia = $request->idprovincia;
-        $distrito->descripcion = $request->descripcion;
+        $distrito->descripcion = strtoupper($request->descripcion);
         $distrito->condicion = '1';
         $distrito->save();
     }

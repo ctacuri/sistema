@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Permiso;
 
 class User extends Authenticatable
 {
@@ -40,5 +41,54 @@ class User extends Authenticatable
 
     public function rol(){
         return $this->belongsTo('App\Rol','idrol'); //Un usuario pertenece a un Rol
+    }
+
+    public function permisosPersonalizados(){
+        return $this->hasMany('App\UserPermiso','iduser'); 
+    }
+
+    public function permisos()
+    {
+        $permisos = null;
+        
+        $permisos = Permiso::where('condicion','=','1')
+        ->leftJoin('rol_permiso',function ($join) {
+            $join->on('permisos.id','=','rol_permiso.idpermiso')
+            ->where('rol_permiso.idrol','=',$this->rol->id);
+        })
+        ->leftJoin('user_permiso',function ($join) {
+            $join->on('permisos.id','=','user_permiso.idpermiso')
+            ->where('user_permiso.iduser','=',$this->id);
+        })
+        ->selectRaw('permisos.id,permisos.codigo,permisos.descripcion,ifnull(ifnull(user_permiso.valor,rol_permiso.valor),permisos.valor) as valor')
+        ->get();
+
+        return $permisos;
+    }
+
+    public function privilegios()
+    {
+        /*
+        $privilegios = [];
+        $allPermisos = Permiso::where('condicion','=','1')->pluck('valor','codigo')->toArray();
+        $permisosPorRol = $this->rol->permisosPersonalizados->pluck('valor','permiso.codigo')->toArray();
+        $permisosPorUsuario = $this->permisosPersonalizados->pluck('valor','permiso.codigo')->toArray();
+        $privilegios = array_merge($allPermisos,array_merge($permisosPorRol,$permisosPorUsuario));
+        */
+        
+        $privilegios = $this->permisos()->pluck('valor','codigo')->toArray();
+
+        return $privilegios;
+    }
+
+    public function puede($key)
+    {
+        $privilegios = $this->privilegios();
+
+        if(isset($privilegios[$key])){
+            return boolval($privilegios[$key]);
+        }
+
+        return false;
     }
 }

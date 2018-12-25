@@ -73,7 +73,7 @@ class DepartamentoController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $departamento = Departamento::findOrFail($request->id);
-        $departamento->descripcion = $request->descripcion;
+        $departamento->descripcion = strtoupper($request->descripcion);
         $departamento->condicion = '1';
         $departamento->save();
     }

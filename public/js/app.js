@@ -2479,13 +2479,21 @@ var app = new Vue({
     el: '#app',
     data: {
         menu: 0,
-        notifications: []
+        notifications: [],
+        granted: []
     },
     created: function created() {
         var me = this;
         axios.post('/notification/get').then(function (response) {
             //console.log(response.data);
             me.notifications = response.data;
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+        axios.get('/logged/granted').then(function (response) {
+            console.log('granted', response.data);
+            me.granted = response.data;
         }).catch(function (error) {
             console.log(error);
         });
@@ -55054,6 +55062,10 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -56186,26 +56198,35 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Categorías\n                "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("categoria", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-plus" }),
-              _vm._v(" Nuevo\n                ")
-            ]
-          )
-        ]),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Categorías\n                "),
+            _vm.$parent.granted["AGREGAR_CATEGORIAS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("categoria", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-plus" }),
+                      _vm._v(" Nuevo\n                    ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -56311,55 +56332,63 @@ var render = function() {
                     _c(
                       "td",
                       [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-warning btn-sm",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                _vm.abrirModal(
-                                  "categoria",
-                                  "actualizar",
-                                  categoria
-                                )
-                              }
-                            }
-                          },
-                          [_c("i", { staticClass: "icon-pencil" })]
-                        ),
-                        _vm._v("  \n                                "),
-                        categoria.condicion
+                        _vm.$parent.granted["ACTUALIZAR_CATEGORIAS"]
                           ? [
                               _c(
                                 "button",
                                 {
-                                  staticClass: "btn btn-danger btn-sm",
+                                  staticClass: "btn btn-warning btn-sm",
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.desactivarCategoria(categoria.id)
+                                      _vm.abrirModal(
+                                        "categoria",
+                                        "actualizar",
+                                        categoria
+                                      )
                                     }
                                   }
                                 },
-                                [_c("i", { staticClass: "icon-trash" })]
-                              )
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              ),
+                              _vm._v(
+                                "  \n                                    "
+                              ),
+                              categoria.condicion
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.desactivarCategoria(
+                                              categoria.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-trash" })]
+                                    )
+                                  ]
+                                : [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-info btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.activarCategoria(categoria.id)
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-check" })]
+                                    )
+                                  ]
                             ]
-                          : [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-info btn-sm",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.activarCategoria(categoria.id)
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "icon-check" })]
-                              )
-                            ]
+                          : _vm._e()
                       ],
                       2
                     ),
@@ -56828,6 +56857,16 @@ exports.push([module.i, "\n.modal-content{\n        width: 100% !important;\n   
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_barcode__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_barcode___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_barcode__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -60203,77 +60242,98 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Productos\n                    "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("articulo", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-doc" }),
-              _vm._v(" Nuevo\n                    ")
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("articulo", "importar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-cloud-upload" }),
-              _vm._v(" Importar\n                    ")
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("categoria", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-plus" }),
-              _vm._v(" Categoria\n                    ")
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.cargarPdf()
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-notebook" }),
-              _vm._v(" Reporte\n                    ")
-            ]
-          )
-        ]),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Productos\n                    "),
+            _vm.$parent.granted["AGREGAR_PRODUCTOS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("articulo", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-doc" }),
+                      _vm._v(" Nuevo\n                        ")
+                    ]
+                  )
+                ]
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$parent.granted["IMPORTAR_PRODUCTOS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("articulo", "importar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-cloud-upload" }),
+                      _vm._v(" Importar\n                        ")
+                    ]
+                  )
+                ]
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$parent.granted["AGREGAR_CATEGORIAS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-info",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("categoria", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-plus" }),
+                      _vm._v(" Categoria\n                        ")
+                    ]
+                  )
+                ]
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$parent.granted["GENERAR_REPORTE_PRODUCTOS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-info",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.cargarPdf()
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-notebook" }),
+                      _vm._v(" Reporte\n                        ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -60379,55 +60439,61 @@ var render = function() {
                     _c(
                       "td",
                       [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-warning btn-sm",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                _vm.abrirModal(
-                                  "articulo",
-                                  "actualizar",
-                                  articulo
-                                )
-                              }
-                            }
-                          },
-                          [_c("i", { staticClass: "icon-pencil" })]
-                        ),
-                        _vm._v("  \n                                    "),
-                        articulo.condicion
+                        _vm.$parent.granted["ACTUALIZAR_PRODUCTOS"]
                           ? [
                               _c(
                                 "button",
                                 {
-                                  staticClass: "btn btn-danger btn-sm",
+                                  staticClass: "btn btn-warning btn-sm",
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.desactivarArticulo(articulo.id)
+                                      _vm.abrirModal(
+                                        "articulo",
+                                        "actualizar",
+                                        articulo
+                                      )
                                     }
                                   }
                                 },
-                                [_c("i", { staticClass: "icon-trash" })]
-                              )
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              ),
+                              _vm._v(
+                                "  \n                                        "
+                              ),
+                              articulo.condicion
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.desactivarArticulo(articulo.id)
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-trash" })]
+                                    )
+                                  ]
+                                : [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-info btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.activarArticulo(articulo.id)
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-check" })]
+                                    )
+                                  ]
                             ]
-                          : [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-info btn-sm",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.activarArticulo(articulo.id)
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "icon-check" })]
-                              )
-                            ]
+                          : _vm._e()
                       ],
                       2
                     ),
@@ -61022,7 +61088,7 @@ var render = function() {
                           staticClass: "col-md-3 form-control-label",
                           attrs: { for: "text-input" }
                         },
-                        [_vm._v("Archivo CSV a importar")]
+                        [_vm._v("Delimitador")]
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-md-6" }, [
@@ -61683,6 +61749,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -61883,26 +61953,35 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Clientes\n                        "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("persona", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-plus" }),
-              _vm._v(" Nuevo\n                        ")
-            ]
-          )
-        ]),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Clientes\n                        "),
+            _vm.$parent.granted["AGREGAR_CLIENTES"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("persona", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-plus" }),
+                      _vm._v(" Nuevo\n                            ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -62013,21 +62092,33 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.arrayPersona, function(persona) {
                   return _c("tr", { key: persona.id }, [
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-warning btn-sm",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              _vm.abrirModal("persona", "actualizar", persona)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "icon-pencil" })]
-                      )
-                    ]),
+                    _c(
+                      "td",
+                      [
+                        _vm.$parent.granted["ACTUALIZAR_CLIENTES"]
+                          ? [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.abrirModal(
+                                        "persona",
+                                        "actualizar",
+                                        persona
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              )
+                            ]
+                          : _vm._e()
+                      ],
+                      2
+                    ),
                     _vm._v(" "),
                     _c("td", {
                       domProps: { textContent: _vm._s(persona.nombre) }
@@ -62861,6 +62952,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -63171,26 +63266,35 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Proveedores\n                        "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("persona", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-plus" }),
-              _vm._v(" Nuevo\n                        ")
-            ]
-          )
-        ]),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Proveedores\n                        "),
+            _vm.$parent.granted["AGREGAR_PROVEEDORES"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("persona", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-plus" }),
+                      _vm._v(" Nuevo\n                            ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -63301,21 +63405,33 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.arrayPersona, function(persona) {
                   return _c("tr", { key: persona.id }, [
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-warning btn-sm",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              _vm.abrirModal("persona", "actualizar", persona)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "icon-pencil" })]
-                      )
-                    ]),
+                    _c(
+                      "td",
+                      [
+                        _vm.$parent.granted["ACTUALIZAR_PROVEEDORES"]
+                          ? [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.abrirModal(
+                                        "persona",
+                                        "actualizar",
+                                        persona
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              )
+                            ]
+                          : _vm._e()
+                      ],
+                      2
+                    ),
                     _vm._v(" "),
                     _c("td", {
                       domProps: { textContent: _vm._s(persona.nombre) }
@@ -64236,7 +64352,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n        width: 100% !important;\n        position: absolute !important;\n}\n.mostrar{\n        display: list-item !important;\n        opacity: 1 !important;\n        position: absolute !important;\n        background-color: #3c29297a !important;\n}\n.div-error{\n        display: flex;\n        justify-content: center;\n}\n.text-error{\n        color: red !important;\n        font-weight: bold;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -64317,82 +64433,407 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            rol_id: 0,
-            nombre: '',
-            descripcion: '',
-            arrayRol: [],
-            modal: 0,
-            tituloModal: '',
-            tipoAccion: 0,
-            pagination: {
-                'total': 0,
-                'current_page': 0,
-                'per_page': 0,
-                'last_page': 0,
-                'from': 0,
-                'to': 0
-            },
-            offset: 3,
-            criterio: 'nombre',
-            buscar: ''
-        };
+  data: function data() {
+    return {
+      rol_id: 0,
+
+      nombre: "",
+      descripcion: "",
+      arrayRol: [],
+      modal: 0,
+      tituloModal: "",
+      errorRol: 0,
+      errorMostrarMsjRol: [],
+
+      procesandoPermisos: false,
+      permisos: [],
+      checkedPermisos: [],
+      modalPermisos: 0,
+      tituloModalPermisos: "",
+      errorPermisos: 0,
+      errorMostrarMsjPermisos: [],
+
+      pagination: {
+        total: 0,
+        current_page: 0,
+        per_page: 0,
+        last_page: 0,
+        from: 0,
+        to: 0
+      },
+      offset: 3,
+      criterio: "nombre",
+      buscar: ""
+    };
+  },
+
+  computed: {
+    isActived: function isActived() {
+      return this.pagination.current_page;
     },
+    //Calcula los elementos de la paginación
+    pagesNumber: function pagesNumber() {
+      if (!this.pagination.to) {
+        return [];
+      }
 
-    computed: {
-        isActived: function isActived() {
-            return this.pagination.current_page;
-        },
-        //Calcula los elementos de la paginación
-        pagesNumber: function pagesNumber() {
-            if (!this.pagination.to) {
-                return [];
-            }
+      var from = this.pagination.current_page - this.offset;
+      if (from < 1) {
+        from = 1;
+      }
 
-            var from = this.pagination.current_page - this.offset;
-            if (from < 1) {
-                from = 1;
-            }
+      var to = from + this.offset * 2;
+      if (to >= this.pagination.last_page) {
+        to = this.pagination.last_page;
+      }
 
-            var to = from + this.offset * 2;
-            if (to >= this.pagination.last_page) {
-                to = this.pagination.last_page;
-            }
-
-            var pagesArray = [];
-            while (from <= to) {
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        }
-    },
-    methods: {
-        listarRol: function listarRol(page, buscar, criterio) {
-            var me = this;
-            var url = '/rol?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayRol = respuesta.roles.data;
-                me.pagination = respuesta.pagination;
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        cambiarPagina: function cambiarPagina(page, buscar, criterio) {
-            var me = this;
-            //Actualiza la página actual
-            me.pagination.current_page = page;
-            //Envia la petición para visualizar la data de esa página
-            me.listarRol(page, buscar, criterio);
-        }
-    },
-    mounted: function mounted() {
-        this.listarRol(1, this.buscar, this.criterio);
+      var pagesArray = [];
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+      return pagesArray;
     }
+  },
+  methods: {
+    listarRol: function listarRol(page, buscar, criterio) {
+      var me = this;
+      var url = "/rol?page=" + page + "&buscar=" + buscar + "&criterio=" + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayRol = respuesta.roles.data;
+        me.pagination = respuesta.pagination;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    cambiarPagina: function cambiarPagina(page, buscar, criterio) {
+      var me = this;
+      //Actualiza la página actual
+      me.pagination.current_page = page;
+      //Envia la petición para visualizar la data de esa página
+      me.listarRol(page, buscar, criterio);
+    },
+    actualizarRol: function actualizarRol() {
+      if (this.validarRol()) {
+        return;
+      }
+
+      var me = this;
+
+      axios.put("/rol/actualizar", {
+        id: this.rol_id,
+        nombre: this.nombre,
+        descripcion: this.descripcion
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarRol(1, "", "nombre");
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    validarRol: function validarRol() {
+      this.errorRol = 0;
+      this.errorMostrarMsjRol = [];
+
+      if (!this.nombre) this.errorMostrarMsjRol.push("El nombre del rol no puede estar vacío.");
+      if (!this.descripcion) this.errorMostrarMsjRol.push("La descripción no puede estar vacía.");
+
+      if (this.errorMostrarMsjRol.length) this.errorRol = 1;
+
+      return this.errorRol;
+    },
+    actualizarPermisos: function actualizarPermisos() {
+      var me = this;
+
+      if (me.procesandoPermisos) {
+        return;
+      }
+
+      me.procesandoPermisos = true;
+      axios.put("/rol/actualizarPermisosDeRol", {
+        id: this.rol_id,
+        checked: this.checkedPermisos
+      }).then(function (response) {
+        me.cerrarModalPermisos();
+        me.listarRol(1, "", "nombre");
+
+        me.procesandoPermisos = false;
+      }).catch(function (error) {
+        console.log(error);
+        me.procesandoPermisos = false;
+      });
+    },
+    cerrarModal: function cerrarModal() {
+      this.modal = 0;
+      this.tituloModal = "";
+      this.nombre = "";
+      this.descripcion = "";
+      this.rol_id = 0;
+      this.errorRol = 0;
+    },
+    cerrarModalPermisos: function cerrarModalPermisos() {
+      this.modalPermisos = 0;
+      this.tituloModalPermisos = "";
+      this.permisos = [];
+      this.checkedPermisos = [];
+      this.rol_id = 0;
+      this.errorRolPermisos = 0;
+    },
+    abrirModal: function abrirModal(modelo, accion) {
+      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      switch (modelo) {
+        case "rol":
+          {
+            switch (accion) {
+              case "actualizar":
+                {
+                  //console.log(data);
+                  this.modal = 1;
+                  this.tituloModal = "Actualizar Rol";
+                  this.rol_id = data["id"];
+                  this.nombre = data["nombre"];
+                  this.descripcion = data["descripcion"];
+                  break;
+                }
+              case "permisos":
+                {
+                  //console.log(data);
+                  this.modalPermisos = 1;
+                  this.tituloModalPermisos = 'Permisos del rol "' + data["nombre"] + '"';
+                  this.rol_id = data["id"];
+
+                  var me = this;
+                  axios.get("/rol/obtenerPermisosDeRol", {
+                    params: {
+                      id: me.rol_id
+                    }
+                  }).then(function (response) {
+                    console.log(response.data);
+                    me.permisos = response.data.permisos;
+                  }).catch(function (error) {
+                    console.log(error);
+                  }).then(function () {
+                    if (me.permisos && me.permisos.length > 0) {
+                      var initialChecked = me.permisos.filter(function (o) {
+                        return o.valor == 1;
+                      });
+                      me.checkedPermisos = initialChecked.map(function (o) {
+                        return o.id;
+                      });
+                      console.log(me.checkedPermisos);
+                    } else {
+                      me.permisos = false;
+                    }
+                  });
+                  break;
+                }
+            }
+          }
+      }
+    }
+  },
+  mounted: function mounted() {
+    this.listarRol(1, this.buscar, this.criterio);
+  }
 });
 
 /***/ }),
@@ -64495,7 +64936,10 @@ var render = function() {
                       }
                     }
                   },
-                  [_c("i", { staticClass: "fa fa-search" }), _vm._v(" Buscar")]
+                  [
+                    _c("i", { staticClass: "fa fa-search" }),
+                    _vm._v(" Buscar\n                ")
+                  ]
                 )
               ])
             ])
@@ -64511,6 +64955,48 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.arrayRol, function(rol) {
                   return _c("tr", { key: rol.id }, [
+                    _c(
+                      "td",
+                      [
+                        _vm.$parent.granted["ACTUALIZAR_ROLES"]
+                          ? [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.abrirModal("rol", "actualizar", rol)
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              ),
+                              _vm._v("  \n                    "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.abrirModal("rol", "permisos", rol)
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("i", {
+                                    staticClass: "icon-user-following"
+                                  })
+                                ]
+                              )
+                            ]
+                          : _vm._e()
+                      ],
+                      2
+                    ),
+                    _vm._v(" "),
                     _c("td", { domProps: { textContent: _vm._s(rol.nombre) } }),
                     _vm._v(" "),
                     _c("td", {
@@ -64616,7 +65102,447 @@ var render = function() {
           ])
         ])
       ])
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        class: { mostrar: _vm.modal },
+        staticStyle: { display: "none" },
+        attrs: {
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-primary modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", {
+                  staticClass: "modal-title",
+                  domProps: { textContent: _vm._s(_vm.tituloModal) }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModal()
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "form-horizontal",
+                    attrs: {
+                      action: "",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "text-input" }
+                        },
+                        [_vm._v("Nombre (*)")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.nombre,
+                              expression: "nombre"
+                            }
+                          ],
+                          staticClass: "form-control text-uppercase",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Nombre del rol"
+                          },
+                          domProps: { value: _vm.nombre },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.nombre = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-md-3 form-control-label",
+                          attrs: { for: "email-input" }
+                        },
+                        [_vm._v("Descripción")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.descripcion,
+                              expression: "descripcion"
+                            }
+                          ],
+                          staticClass: "form-control text-uppercase",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Descripción del rol"
+                          },
+                          domProps: { value: _vm.descripcion },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.descripcion = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.errorRol,
+                            expression: "errorRol"
+                          }
+                        ],
+                        staticClass: "form-group row div-error"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "text-center text-error" },
+                          _vm._l(_vm.errorMostrarMsjRol, function(error) {
+                            return _c("div", {
+                              key: error,
+                              domProps: { textContent: _vm._s(error) }
+                            })
+                          })
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModal()
+                      }
+                    }
+                  },
+                  [_vm._v("Cerrar")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.actualizarRol()
+                      }
+                    }
+                  },
+                  [_vm._v("Actualizar")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        class: { mostrar: _vm.modalPermisos },
+        staticStyle: { display: "none" },
+        attrs: {
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-primary modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", {
+                  staticClass: "modal-title",
+                  domProps: { textContent: _vm._s(_vm.tituloModalPermisos) }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModalPermisos()
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "form-horizontal",
+                    attrs: {
+                      action: "",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "div",
+                        { staticClass: "col-md-12" },
+                        [
+                          _vm.permisos && _vm.permisos.length == 0
+                            ? [_vm._m(3)]
+                            : _vm.permisos && _vm.permisos.length > 0
+                            ? [
+                                _c(
+                                  "div",
+                                  { staticClass: "checkbox-list-wrapper" },
+                                  [
+                                    _c(
+                                      "ul",
+                                      { staticClass: "checkbox-list" },
+                                      _vm._l(_vm.permisos, function(permiso) {
+                                        return _c("li", { key: permiso.id }, [
+                                          _c(
+                                            "label",
+                                            { attrs: { for: permiso.id } },
+                                            [
+                                              _c("input", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value: _vm.checkedPermisos,
+                                                    expression:
+                                                      "checkedPermisos"
+                                                  }
+                                                ],
+                                                attrs: {
+                                                  type: "checkbox",
+                                                  id: permiso.id
+                                                },
+                                                domProps: {
+                                                  value: permiso.id,
+                                                  checked: Array.isArray(
+                                                    _vm.checkedPermisos
+                                                  )
+                                                    ? _vm._i(
+                                                        _vm.checkedPermisos,
+                                                        permiso.id
+                                                      ) > -1
+                                                    : _vm.checkedPermisos
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    var $$a =
+                                                        _vm.checkedPermisos,
+                                                      $$el = $event.target,
+                                                      $$c = $$el.checked
+                                                        ? true
+                                                        : false
+                                                    if (Array.isArray($$a)) {
+                                                      var $$v = permiso.id,
+                                                        $$i = _vm._i($$a, $$v)
+                                                      if ($$el.checked) {
+                                                        $$i < 0 &&
+                                                          (_vm.checkedPermisos = $$a.concat(
+                                                            [$$v]
+                                                          ))
+                                                      } else {
+                                                        $$i > -1 &&
+                                                          (_vm.checkedPermisos = $$a
+                                                            .slice(0, $$i)
+                                                            .concat(
+                                                              $$a.slice($$i + 1)
+                                                            ))
+                                                      }
+                                                    } else {
+                                                      _vm.checkedPermisos = $$c
+                                                    }
+                                                  }
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("span", {
+                                                domProps: {
+                                                  textContent: _vm._s(
+                                                    permiso.descripcion
+                                                  )
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ])
+                                      })
+                                    )
+                                  ]
+                                )
+                              ]
+                            : _vm.permisos == false
+                            ? [_vm._m(4)]
+                            : _vm._e()
+                        ],
+                        2
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.errorPermisos,
+                            expression: "errorPermisos"
+                          }
+                        ],
+                        staticClass: "form-group row div-error"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "text-center text-error" },
+                          _vm._l(_vm.errorMostrarMsjPermisos, function(error) {
+                            return _c("div", {
+                              key: error,
+                              domProps: { textContent: _vm._s(error) }
+                            })
+                          })
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button", disabled: _vm.procesandoPermisos },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModalPermisos()
+                      }
+                    }
+                  },
+                  [_vm._v("Cerrar")]
+                ),
+                _vm._v(" "),
+                _vm.permisos && _vm.permisos.length > 0
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: {
+                          type: "button",
+                          disabled: _vm.procesandoPermisos
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.actualizarPermisos()
+                          }
+                        }
+                      },
+                      [
+                        !_vm.procesandoPermisos
+                          ? _c("span", [_vm._v("Guardar")])
+                          : _c("span", { staticClass: "spinner" }, [
+                              _c("span", { staticClass: "bounce1" }),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "bounce2" }),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "bounce3" })
+                            ])
+                      ]
+                    )
+                  : _vm._e()
+              ])
+            ])
+          ]
+        )
+      ]
+    )
   ])
 }
 var staticRenderFns = [
@@ -64636,7 +65562,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("i", { staticClass: "fa fa-align-justify" }),
-      _vm._v(" Roles\n                    ")
+      _vm._v(" Roles\n        ")
     ])
   },
   function() {
@@ -64645,12 +65571,38 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Opciones")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
         _c("th", [_vm._v("Descripción")]),
         _vm._v(" "),
         _c("th", [_vm._v("Estado")])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("em", [_vm._v("Cargando permisos")]),
+      _vm._v(" "),
+      _c("span", { staticClass: "spinner blue" }, [
+        _c("span", { staticClass: "bounce1" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "bounce2" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "bounce3" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-center text-error" }, [
+      _c("p", [_vm._v("No existen permisos")])
     ])
   }
 ]
@@ -64749,7 +65701,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n        width: 100% !important;\n        position: absolute !important;\n}\n.mostrar{\n        display: list-item !important;\n        opacity: 1 !important;\n        position: absolute !important;\n        background-color: #3c29297a !important;\n}\n.div-error{\n        display: flex;\n        justify-content: center;\n}\n.text-error{\n        color: red !important;\n        font-weight: bold;\n}\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -64947,289 +65899,564 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            persona_id: 0,
-            nombre: '',
-            tipo_documento: 'DNI',
-            num_documento: '',
-            direccion: '',
-            telefono: '',
-            email: '',
-            usuario: '',
-            password: '',
-            idrol: 0,
-            arrayPersona: [],
-            arrayRol: [],
-            modal: 0,
-            tituloModal: '',
-            tipoAccion: 0,
-            errorPersona: 0,
-            errorMostrarMsjPersona: [],
-            pagination: {
-                'total': 0,
-                'current_page': 0,
-                'per_page': 0,
-                'last_page': 0,
-                'from': 0,
-                'to': 0
-            },
-            offset: 3,
-            criterio: 'nombre',
-            buscar: ''
-        };
+  data: function data() {
+    return {
+      persona_id: 0,
+
+      nombre: "",
+      tipo_documento: "DNI",
+      num_documento: "",
+      direccion: "",
+      telefono: "",
+      email: "",
+      usuario: "",
+      password: "",
+      idrol: 0,
+      arrayPersona: [],
+      arrayRol: [],
+      modal: 0,
+      tituloModal: "",
+      tipoAccion: 0,
+      errorPersona: 0,
+      errorMostrarMsjPersona: [],
+
+      procesandoPermisos: false,
+      permisos: [],
+      checkedPermisos: [],
+      modalPermisos: 0,
+      tituloModalPermisos: "",
+      errorPermisos: 0,
+      errorMostrarMsjPermisos: [],
+
+      pagination: {
+        total: 0,
+        current_page: 0,
+        per_page: 0,
+        last_page: 0,
+        from: 0,
+        to: 0
+      },
+      offset: 3,
+      criterio: "nombre",
+      buscar: ""
+    };
+  },
+
+  computed: {
+    isActived: function isActived() {
+      return this.pagination.current_page;
     },
+    //Calcula los elementos de la paginación
+    pagesNumber: function pagesNumber() {
+      if (!this.pagination.to) {
+        return [];
+      }
 
-    computed: {
-        isActived: function isActived() {
-            return this.pagination.current_page;
-        },
-        //Calcula los elementos de la paginación
-        pagesNumber: function pagesNumber() {
-            if (!this.pagination.to) {
-                return [];
-            }
+      var from = this.pagination.current_page - this.offset;
+      if (from < 1) {
+        from = 1;
+      }
 
-            var from = this.pagination.current_page - this.offset;
-            if (from < 1) {
-                from = 1;
-            }
+      var to = from + this.offset * 2;
+      if (to >= this.pagination.last_page) {
+        to = this.pagination.last_page;
+      }
 
-            var to = from + this.offset * 2;
-            if (to >= this.pagination.last_page) {
-                to = this.pagination.last_page;
-            }
-
-            var pagesArray = [];
-            while (from <= to) {
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        }
-    },
-    methods: {
-        listarPersona: function listarPersona(page, buscar, criterio) {
-            var me = this;
-            var url = '/user?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayPersona = respuesta.personas.data;
-                me.pagination = respuesta.pagination;
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        selectRol: function selectRol() {
-            var me = this;
-            var url = '/rol/selectRol';
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayRol = respuesta.roles;
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        cambiarPagina: function cambiarPagina(page, buscar, criterio) {
-            var me = this;
-            //Actualiza la página actual
-            me.pagination.current_page = page;
-            //Envia la petición para visualizar la data de esa página
-            me.listarPersona(page, buscar, criterio);
-        },
-        registrarPersona: function registrarPersona() {
-            if (this.validarPersona()) {
-                return;
-            }
-
-            var me = this;
-
-            axios.post('/user/registrar', {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'direccion': this.direccion,
-                'telefono': this.telefono,
-                'email': this.email,
-                'usuario': this.usuario,
-                'password': this.password,
-                'idrol': this.idrol
-
-            }).then(function (response) {
-                me.cerrarModal();
-                me.listarPersona(1, '', 'nombre');
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        actualizarPersona: function actualizarPersona() {
-            if (this.validarPersona()) {
-                return;
-            }
-
-            var me = this;
-
-            axios.put('/user/actualizar', {
-                'nombre': this.nombre,
-                'tipo_documento': this.tipo_documento,
-                'num_documento': this.num_documento,
-                'direccion': this.direccion,
-                'telefono': this.telefono,
-                'email': this.email,
-                'usuario': this.usuario,
-                'password': this.password,
-                'idrol': this.idrol,
-                'id': this.persona_id
-            }).then(function (response) {
-                me.cerrarModal();
-                me.listarPersona(1, '', 'nombre');
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        validarPersona: function validarPersona() {
-            this.errorPersona = 0;
-            this.errorMostrarMsjPersona = [];
-
-            if (!this.nombre) this.errorMostrarMsjPersona.push("El nombre de la persona no puede estar vacío.");
-            if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
-            if (!this.password) this.errorMostrarMsjPersona.push("El password no puede estar vacío.");
-            if (this.idrol == 0) this.errorMostrarMsjPersona.push("Debes seleccionar un rol para el usuario.");
-
-            if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
-
-            return this.errorPersona;
-        },
-        cerrarModal: function cerrarModal() {
-            this.modal = 0;
-            this.tituloModal = '';
-            this.nombre = '';
-            this.tipo_documento = 'DNI';
-            this.num_documento = '';
-            this.direccion = '';
-            this.telefono = '';
-            this.email = '';
-            this.usuario = '';
-            this.password = '';
-            this.idrol = 0;
-            this.errorPersona = 0;
-        },
-        abrirModal: function abrirModal(modelo, accion) {
-            var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-            this.selectRol();
-            switch (modelo) {
-                case "persona":
-                    {
-                        switch (accion) {
-                            case 'registrar':
-                                {
-                                    this.modal = 1;
-                                    this.tituloModal = 'Registrar Usuario';
-                                    this.nombre = '';
-                                    this.tipo_documento = 'DNI';
-                                    this.num_documento = '';
-                                    this.direccion = '';
-                                    this.telefono = '';
-                                    this.email = '';
-                                    this.usuario = '';
-                                    this.password = '';
-                                    this.idrol = 0;
-                                    this.tipoAccion = 1;
-                                    break;
-                                }
-                            case 'actualizar':
-                                {
-                                    //console.log(data);
-                                    this.modal = 1;
-                                    this.tituloModal = 'Actualizar Usuario';
-                                    this.tipoAccion = 2;
-                                    this.persona_id = data['id'];
-                                    this.nombre = data['nombre'];
-                                    this.tipo_documento = data['tipo_documento'];
-                                    this.num_documento = data['num_documento'];
-                                    this.direccion = data['direccion'];
-                                    this.telefono = data['telefono'];
-                                    this.email = data['email'];
-                                    this.usuario = data['usuario'];
-                                    this.password = data['password'];
-                                    this.idrol = data['idrol'];
-                                    break;
-                                }
-                        }
-                    }
-            }
-        },
-        desactivarUsuario: function desactivarUsuario(id) {
-            var _this = this;
-
-            swal({
-                title: 'Esta seguro de desactivar este usuario?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
-            }).then(function (result) {
-                if (result.value) {
-                    var me = _this;
-
-                    axios.put('/user/desactivar', {
-                        'id': id
-                    }).then(function (response) {
-                        me.listarPersona(1, '', 'nombre');
-                        swal('Desactivado!', 'El registro ha sido desactivado con éxito.', 'success');
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                } else if (
-                // Read more about handling dismissals
-                result.dismiss === swal.DismissReason.cancel) {}
-            });
-        },
-        activarUsuario: function activarUsuario(id) {
-            var _this2 = this;
-
-            swal({
-                title: 'Esta seguro de activar este usuario?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
-            }).then(function (result) {
-                if (result.value) {
-                    var me = _this2;
-
-                    axios.put('/user/activar', {
-                        'id': id
-                    }).then(function (response) {
-                        me.listarPersona(1, '', 'nombre');
-                        swal('Activado!', 'El registro ha sido activado con éxito.', 'success');
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                } else if (
-                // Read more about handling dismissals
-                result.dismiss === swal.DismissReason.cancel) {}
-            });
-        }
-    },
-    mounted: function mounted() {
-        this.listarPersona(1, this.buscar, this.criterio);
+      var pagesArray = [];
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+      return pagesArray;
     }
+  },
+  methods: {
+    listarPersona: function listarPersona(page, buscar, criterio) {
+      var me = this;
+      var url = "/user?page=" + page + "&buscar=" + buscar + "&criterio=" + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayPersona = respuesta.personas.data;
+        me.pagination = respuesta.pagination;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    selectRol: function selectRol() {
+      var me = this;
+      var url = "/rol/selectRol";
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayRol = respuesta.roles;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    cambiarPagina: function cambiarPagina(page, buscar, criterio) {
+      var me = this;
+      //Actualiza la página actual
+      me.pagination.current_page = page;
+      //Envia la petición para visualizar la data de esa página
+      me.listarPersona(page, buscar, criterio);
+    },
+    registrarPersona: function registrarPersona() {
+      if (this.validarPersona()) {
+        return;
+      }
+
+      var me = this;
+
+      axios.post("/user/registrar", {
+        nombre: this.nombre,
+        tipo_documento: this.tipo_documento,
+        num_documento: this.num_documento,
+        direccion: this.direccion,
+        telefono: this.telefono,
+        email: this.email,
+        usuario: this.usuario,
+        password: this.password,
+        idrol: this.idrol
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarPersona(1, "", "nombre");
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    actualizarPersona: function actualizarPersona() {
+      if (this.validarPersona()) {
+        return;
+      }
+
+      var me = this;
+
+      axios.put("/user/actualizar", {
+        nombre: this.nombre,
+        tipo_documento: this.tipo_documento,
+        num_documento: this.num_documento,
+        direccion: this.direccion,
+        telefono: this.telefono,
+        email: this.email,
+        usuario: this.usuario,
+        password: this.password,
+        idrol: this.idrol,
+        id: this.persona_id
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarPersona(1, "", "nombre");
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    validarPersona: function validarPersona() {
+      this.errorPersona = 0;
+      this.errorMostrarMsjPersona = [];
+
+      if (!this.nombre) this.errorMostrarMsjPersona.push("El nombre de la persona no puede estar vacío.");
+      if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
+      if (!this.password) this.errorMostrarMsjPersona.push("El password no puede estar vacío.");
+      if (this.idrol == 0) this.errorMostrarMsjPersona.push("Debes seleccionar un rol para el usuario.");
+
+      if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
+
+      return this.errorPersona;
+    },
+    actualizarPermisos: function actualizarPermisos() {
+      var me = this;
+
+      if (me.procesandoPermisos) {
+        return;
+      }
+
+      me.procesandoPermisos = true;
+      axios.put("/user/actualizarPermisosDeUsuario", {
+        id: this.persona_id,
+        checked: this.checkedPermisos
+      }).then(function (response) {
+        me.cerrarModalPermisos();
+        me.listarPersona(1, "", "nombre");
+
+        me.procesandoPermisos = false;
+      }).catch(function (error) {
+        console.log(error);
+        me.procesandoPermisos = false;
+      });
+    },
+    cerrarModal: function cerrarModal() {
+      this.modal = 0;
+      this.tituloModal = "";
+      this.nombre = "";
+      this.tipo_documento = "DNI";
+      this.num_documento = "";
+      this.direccion = "";
+      this.telefono = "";
+      this.email = "";
+      this.usuario = "";
+      this.password = "";
+      this.idrol = 0;
+      this.errorPersona = 0;
+    },
+    cerrarModalPermisos: function cerrarModalPermisos() {
+      this.modalPermisos = 0;
+      this.tituloModalPermisos = "";
+      this.permisos = [];
+      this.checkedPermisos = [];
+      this.persona_id = 0;
+      this.errorRolPermisos = 0;
+    },
+    abrirModal: function abrirModal(modelo, accion) {
+      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      this.selectRol();
+      switch (modelo) {
+        case "persona":
+          {
+            switch (accion) {
+              case "registrar":
+                {
+                  this.modal = 1;
+                  this.tituloModal = "Registrar Usuario";
+                  this.nombre = "";
+                  this.tipo_documento = "DNI";
+                  this.num_documento = "";
+                  this.direccion = "";
+                  this.telefono = "";
+                  this.email = "";
+                  this.usuario = "";
+                  this.password = "";
+                  this.idrol = 0;
+                  this.tipoAccion = 1;
+                  break;
+                }
+              case "actualizar":
+                {
+                  //console.log(data);
+                  this.modal = 1;
+                  this.tituloModal = "Actualizar Usuario";
+                  this.tipoAccion = 2;
+                  this.persona_id = data["id"];
+                  this.nombre = data["nombre"];
+                  this.tipo_documento = data["tipo_documento"];
+                  this.num_documento = data["num_documento"];
+                  this.direccion = data["direccion"];
+                  this.telefono = data["telefono"];
+                  this.email = data["email"];
+                  this.usuario = data["usuario"];
+                  this.password = data["password"];
+                  this.idrol = data["idrol"];
+                  break;
+                }
+              case "permisos":
+                {
+                  //console.log(data);
+                  this.modalPermisos = 1;
+                  this.tituloModalPermisos = 'Permisos del usuario "' + data["nombre"] + '"';
+                  this.persona_id = data["id"];
+
+                  var me = this;
+                  axios.get("/user/obtenerPermisosDeUsuario", {
+                    params: {
+                      id: me.persona_id
+                    }
+                  }).then(function (response) {
+                    console.log(response.data);
+                    me.permisos = response.data.permisos;
+                  }).catch(function (error) {
+                    console.log(error);
+                  }).then(function () {
+                    if (me.permisos && me.permisos.length > 0) {
+                      var initialChecked = me.permisos.filter(function (o) {
+                        return o.valor == 1;
+                      });
+                      me.checkedPermisos = initialChecked.map(function (o) {
+                        return o.id;
+                      });
+                      console.log(me.checkedPermisos);
+                    } else {
+                      me.permisos = false;
+                    }
+                  });
+                  break;
+                }
+            }
+          }
+      }
+    },
+    desactivarUsuario: function desactivarUsuario(id) {
+      var _this = this;
+
+      swal({
+        title: "Esta seguro de desactivar este usuario?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar!",
+        cancelButtonText: "Cancelar",
+        confirmButtonClass: "btn btn-success",
+        cancelButtonClass: "btn btn-danger",
+        buttonsStyling: false,
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          var me = _this;
+
+          axios.put("/user/desactivar", {
+            id: id
+          }).then(function (response) {
+            me.listarPersona(1, "", "nombre");
+            swal("Desactivado!", "El registro ha sido desactivado con éxito.", "success");
+          }).catch(function (error) {
+            console.log(error);
+          });
+        } else if (
+        // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel) {}
+      });
+    },
+    activarUsuario: function activarUsuario(id) {
+      var _this2 = this;
+
+      swal({
+        title: "Esta seguro de activar este usuario?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar!",
+        cancelButtonText: "Cancelar",
+        confirmButtonClass: "btn btn-success",
+        cancelButtonClass: "btn btn-danger",
+        buttonsStyling: false,
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          var me = _this2;
+
+          axios.put("/user/activar", {
+            id: id
+          }).then(function (response) {
+            me.listarPersona(1, "", "nombre");
+            swal("Activado!", "El registro ha sido activado con éxito.", "success");
+          }).catch(function (error) {
+            console.log(error);
+          });
+        } else if (
+        // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel) {}
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.listarPersona(1, this.buscar, this.criterio);
+  }
 });
 
 /***/ }),
@@ -65245,26 +66472,35 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("i", { staticClass: "fa fa-align-justify" }),
-          _vm._v(" Usuarios\n                        "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.abrirModal("persona", "registrar")
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "icon-plus" }),
-              _vm._v(" Nuevo\n                        ")
-            ]
-          )
-        ]),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Usuarios\n          "),
+            _vm.$parent.granted["AGREGAR_USUARIOS"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("persona", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-plus" }),
+                      _vm._v(" Nuevo\n            ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -65359,7 +66595,10 @@ var render = function() {
                       }
                     }
                   },
-                  [_c("i", { staticClass: "fa fa-search" }), _vm._v(" Buscar")]
+                  [
+                    _c("i", { staticClass: "fa fa-search" }),
+                    _vm._v(" Buscar\n                ")
+                  ]
                 )
               ])
             ])
@@ -65378,51 +66617,81 @@ var render = function() {
                     _c(
                       "td",
                       [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-warning btn-sm",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                _vm.abrirModal("persona", "actualizar", persona)
-                              }
-                            }
-                          },
-                          [_c("i", { staticClass: "icon-pencil" })]
-                        ),
-                        _vm._v(" \n                                        "),
-                        persona.condicion
+                        _vm.$parent.granted["ACTUALIZAR_USUARIOS"]
                           ? [
                               _c(
                                 "button",
                                 {
-                                  staticClass: "btn btn-danger btn-sm",
+                                  staticClass: "btn btn-warning btn-sm",
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.desactivarUsuario(persona.id)
+                                      _vm.abrirModal(
+                                        "persona",
+                                        "actualizar",
+                                        persona
+                                      )
                                     }
                                   }
                                 },
-                                [_c("i", { staticClass: "icon-trash" })]
-                              )
-                            ]
-                          : [
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              ),
+                              _vm._v("  \n                    "),
                               _c(
                                 "button",
                                 {
-                                  staticClass: "btn btn-info btn-sm",
+                                  staticClass: "btn btn-warning btn-sm",
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      _vm.activarUsuario(persona.id)
+                                      _vm.abrirModal(
+                                        "persona",
+                                        "permisos",
+                                        persona
+                                      )
                                     }
                                   }
                                 },
-                                [_c("i", { staticClass: "icon-check" })]
-                              )
+                                [
+                                  _c("i", {
+                                    staticClass: "icon-user-following"
+                                  })
+                                ]
+                              ),
+                              _vm._v("  \n                    "),
+                              persona.condicion
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.desactivarUsuario(persona.id)
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-trash" })]
+                                    )
+                                  ]
+                                : [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-info btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.activarUsuario(persona.id)
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-check" })]
+                                    )
+                                  ]
                             ]
+                          : _vm._e()
                       ],
                       2
                     ),
@@ -66060,6 +67329,246 @@ var render = function() {
           ]
         )
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        class: { mostrar: _vm.modalPermisos },
+        staticStyle: { display: "none" },
+        attrs: {
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-primary modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h4", {
+                  staticClass: "modal-title",
+                  domProps: { textContent: _vm._s(_vm.tituloModalPermisos) }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModalPermisos()
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "form-horizontal",
+                    attrs: {
+                      action: "",
+                      method: "post",
+                      enctype: "multipart/form-data"
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "div",
+                        { staticClass: "col-md-12" },
+                        [
+                          _vm.permisos && _vm.permisos.length == 0
+                            ? [_vm._m(2)]
+                            : _vm.permisos && _vm.permisos.length > 0
+                            ? [
+                                _c(
+                                  "div",
+                                  { staticClass: "checkbox-list-wrapper" },
+                                  [
+                                    _c(
+                                      "ul",
+                                      { staticClass: "checkbox-list" },
+                                      _vm._l(_vm.permisos, function(permiso) {
+                                        return _c("li", { key: permiso.id }, [
+                                          _c(
+                                            "label",
+                                            { attrs: { for: permiso.id } },
+                                            [
+                                              _c("input", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value: _vm.checkedPermisos,
+                                                    expression:
+                                                      "checkedPermisos"
+                                                  }
+                                                ],
+                                                attrs: {
+                                                  type: "checkbox",
+                                                  id: permiso.id
+                                                },
+                                                domProps: {
+                                                  value: permiso.id,
+                                                  checked: Array.isArray(
+                                                    _vm.checkedPermisos
+                                                  )
+                                                    ? _vm._i(
+                                                        _vm.checkedPermisos,
+                                                        permiso.id
+                                                      ) > -1
+                                                    : _vm.checkedPermisos
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    var $$a =
+                                                        _vm.checkedPermisos,
+                                                      $$el = $event.target,
+                                                      $$c = $$el.checked
+                                                        ? true
+                                                        : false
+                                                    if (Array.isArray($$a)) {
+                                                      var $$v = permiso.id,
+                                                        $$i = _vm._i($$a, $$v)
+                                                      if ($$el.checked) {
+                                                        $$i < 0 &&
+                                                          (_vm.checkedPermisos = $$a.concat(
+                                                            [$$v]
+                                                          ))
+                                                      } else {
+                                                        $$i > -1 &&
+                                                          (_vm.checkedPermisos = $$a
+                                                            .slice(0, $$i)
+                                                            .concat(
+                                                              $$a.slice($$i + 1)
+                                                            ))
+                                                      }
+                                                    } else {
+                                                      _vm.checkedPermisos = $$c
+                                                    }
+                                                  }
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("span", {
+                                                domProps: {
+                                                  textContent: _vm._s(
+                                                    permiso.descripcion
+                                                  )
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ])
+                                      })
+                                    )
+                                  ]
+                                )
+                              ]
+                            : _vm.permisos == false
+                            ? [_vm._m(3)]
+                            : _vm._e()
+                        ],
+                        2
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.errorPermisos,
+                            expression: "errorPermisos"
+                          }
+                        ],
+                        staticClass: "form-group row div-error"
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "text-center text-error" },
+                          _vm._l(_vm.errorMostrarMsjPermisos, function(error) {
+                            return _c("div", {
+                              key: error,
+                              domProps: { textContent: _vm._s(error) }
+                            })
+                          })
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button", disabled: _vm.procesandoPermisos },
+                    on: {
+                      click: function($event) {
+                        _vm.cerrarModalPermisos()
+                      }
+                    }
+                  },
+                  [_vm._v("Cerrar")]
+                ),
+                _vm._v(" "),
+                _vm.permisos && _vm.permisos.length > 0
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: {
+                          type: "button",
+                          disabled: _vm.procesandoPermisos
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.actualizarPermisos()
+                          }
+                        }
+                      },
+                      [
+                        !_vm.procesandoPermisos
+                          ? _c("span", [_vm._v("Guardar")])
+                          : _c("span", { staticClass: "spinner" }, [
+                              _c("span", { staticClass: "bounce1" }),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "bounce2" }),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "bounce3" })
+                            ])
+                      ]
+                    )
+                  : _vm._e()
+              ])
+            ])
+          ]
+        )
+      ]
     )
   ])
 }
@@ -66098,6 +67607,30 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Rol")])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("em", [_vm._v("Cargando permisos")]),
+      _vm._v(" "),
+      _c("span", { staticClass: "spinner blue" }, [
+        _c("span", { staticClass: "bounce1" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "bounce2" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "bounce3" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-center text-error" }, [
+      _c("p", [_vm._v("No existen permisos")])
     ])
   }
 ]
@@ -66209,6 +67742,10 @@ exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  positi
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_select__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_select___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue_select__);
+//
+//
+//
+//
 //
 //
 //
@@ -67133,26 +68670,35 @@ var render = function() {
         "div",
         { staticClass: "card" },
         [
-          _c("div", { staticClass: "card-header" }, [
-            _c("i", { staticClass: "fa fa-align-justify" }),
-            _vm._v(" Ingresos\n          "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-secondary",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    _vm.mostrarDetalle()
-                  }
-                }
-              },
-              [
-                _c("i", { staticClass: "icon-plus" }),
-                _vm._v(" Nuevo\n          ")
-              ]
-            )
-          ]),
+          _c(
+            "div",
+            { staticClass: "card-header" },
+            [
+              _c("i", { staticClass: "fa fa-align-justify" }),
+              _vm._v(" Ingresos\n          "),
+              _vm.$parent.granted["AGREGAR_INGRESOS"]
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.mostrarDetalle()
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "icon-plus" }),
+                        _vm._v(" Nuevo\n            ")
+                      ]
+                    )
+                  ]
+                : _vm._e()
+            ],
+            2
+          ),
           _vm._v(" "),
           _vm.listado == 1
             ? [
@@ -67298,28 +68844,32 @@ var render = function() {
                                     [_c("i", { staticClass: "icon-eye" })]
                                   ),
                                   _vm._v("  \n                      "),
-                                  ingreso.estado == "Registrado"
+                                  _vm.$parent.granted["ACTUALIZAR_INGRESOS"]
                                     ? [
-                                        _c(
-                                          "button",
-                                          {
-                                            staticClass:
-                                              "btn btn-danger btn-sm",
-                                            attrs: { type: "button" },
-                                            on: {
-                                              click: function($event) {
-                                                _vm.desactivarIngreso(
-                                                  ingreso.id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [
-                                            _c("i", {
-                                              staticClass: "icon-trash"
-                                            })
-                                          ]
-                                        )
+                                        ingreso.estado == "Registrado"
+                                          ? [
+                                              _c(
+                                                "button",
+                                                {
+                                                  staticClass:
+                                                    "btn btn-danger btn-sm",
+                                                  attrs: { type: "button" },
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.desactivarIngreso(
+                                                        ingreso.id
+                                                      )
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass: "icon-trash"
+                                                  })
+                                                ]
+                                              )
+                                            ]
+                                          : _vm._e()
                                       ]
                                     : _vm._e()
                                 ],
@@ -68861,7 +70411,7 @@ exports = module.exports = __webpack_require__(3)(false);
 
 
 // module
-exports.push([module.i, "\n.modal-content{\n        width: 100% !important;\n        position: absolute !important;\n}\n.mostrar{\n        display: list-item !important;\n        opacity: 1 !important;\n        position: absolute !important;\n        background-color: #3c29297a !important;\n}\n.div-error{\n        display: flex;\n        justify-content: center;\n}\n.text-error{\n        color: red !important;\n        font-weight: bold;\n}\n.text-right{\n        text-align: right;\n}\n.text-left{\n        text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n            margin-top: 2rem;\n}\n}\n\n", ""]);
+exports.push([module.i, "\n.modal-content {\n  width: 100% !important;\n  position: absolute !important;\n}\n.mostrar {\n  display: list-item !important;\n  opacity: 1 !important;\n  position: absolute !important;\n  background-color: #3c29297a !important;\n}\n.div-error {\n  display: flex;\n  justify-content: center;\n}\n.text-error {\n  color: red !important;\n  font-weight: bold;\n}\n.text-right {\n  text-align: right;\n}\n.text-left {\n  text-align: left;\n}\n@media (min-width: 600px) {\n.btnagregar {\n    margin-top: 2rem;\n}\n}\n", ""]);
 
 // exports
 
@@ -69295,393 +70845,514 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            venta_id: 0,
-            idcliente: 0,
-            cliente: '',
-            tipo_comprobante: 'BOLETA',
-            serie_comprobante: '',
-            num_comprobante: '',
-            impuesto: 0.18,
-            total: 0.0,
-            totalImpuesto: 0.0,
-            totalParcial: 0.0,
-            arrayVenta: [],
-            arrayCliente: [],
-            arrayDetalle: [],
-            listado: 1,
-            modal: 0,
-            tituloModal: '',
-            tipoAccion: 0,
-            errorVenta: 0,
-            errorMostrarMsjVenta: [],
-            pagination: {
-                'total': 0,
-                'current_page': 0,
-                'per_page': 0,
-                'last_page': 0,
-                'from': 0,
-                'to': 0
-            },
-            offset: 3,
-            criterio: 'num_comprobante',
-            buscar: '',
-            criterioA: 'nombre',
-            buscarA: '',
-            arrayArticulo: [],
-            idarticulo: 0,
-            codigo: '',
-            articulo: '',
-            precio: 0,
-            cantidad: 0,
-            descuento: 0,
-            stock: 0
-        };
+  data: function data() {
+    return {
+      venta_id: 0,
+      idcliente: 0,
+      cliente: "",
+      tipo_comprobante: "BOLETA",
+      serie_comprobante: "",
+      num_comprobante: "",
+      impuesto: 0.18,
+      total: 0.0,
+      totalImpuesto: 0.0,
+      totalParcial: 0.0,
+      arrayVenta: [],
+      arrayCliente: [],
+      arrayDetalle: [],
+      listado: 1,
+      modal: 0,
+      tituloModal: "",
+      tipoAccion: 0,
+      errorVenta: 0,
+      errorMostrarMsjVenta: [],
+      pagination: {
+        total: 0,
+        current_page: 0,
+        per_page: 0,
+        last_page: 0,
+        from: 0,
+        to: 0
+      },
+      offset: 3,
+      criterio: "num_comprobante",
+      buscar: "",
+      criterioA: "nombre",
+      buscarA: "",
+      arrayArticulo: [],
+      idarticulo: 0,
+      codigo: "",
+      articulo: "",
+      precio: 0,
+      cantidad: 0,
+      descuento: 0,
+      stock: 0
+    };
+  },
+
+  components: {
+    vSelect: __WEBPACK_IMPORTED_MODULE_0_vue_select___default.a
+  },
+  computed: {
+    isActived: function isActived() {
+      return this.pagination.current_page;
     },
+    //Calcula los elementos de la paginación
+    pagesNumber: function pagesNumber() {
+      if (!this.pagination.to) {
+        return [];
+      }
 
-    components: {
-        vSelect: __WEBPACK_IMPORTED_MODULE_0_vue_select___default.a
+      var from = this.pagination.current_page - this.offset;
+      if (from < 1) {
+        from = 1;
+      }
+
+      var to = from + this.offset * 2;
+      if (to >= this.pagination.last_page) {
+        to = this.pagination.last_page;
+      }
+
+      var pagesArray = [];
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+      return pagesArray;
     },
-    computed: {
-        isActived: function isActived() {
-            return this.pagination.current_page;
-        },
-        //Calcula los elementos de la paginación
-        pagesNumber: function pagesNumber() {
-            if (!this.pagination.to) {
-                return [];
-            }
+    calcularTotal: function calcularTotal() {
+      var resultado = 0.0;
+      for (var i = 0; i < this.arrayDetalle.length; i++) {
+        resultado = resultado + (this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad - this.arrayDetalle[i].descuento);
+      }
+      return resultado;
+    }
+  },
+  methods: {
+    listarVenta: function listarVenta(page, buscar, criterio) {
+      var me = this;
+      var url = "/venta?page=" + page + "&buscar=" + buscar + "&criterio=" + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayVenta = respuesta.ventas.data;
+        me.pagination = respuesta.pagination;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    selectCliente: function selectCliente(search, loading) {
+      var me = this;
+      loading(true);
 
-            var from = this.pagination.current_page - this.offset;
-            if (from < 1) {
-                from = 1;
-            }
+      var url = "/cliente/selectCliente?filtro=" + search;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        q: search;
+        me.arrayCliente = respuesta.clientes;
+        loading(false);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    getDatosCliente: function getDatosCliente(val1) {
+      var me = this;
+      me.loading = true;
+      me.idcliente = val1.id;
+    },
+    buscarArticulo: function buscarArticulo() {
+      var me = this;
+      var url = "/articulo/buscarArticuloVenta?filtro=" + me.codigo;
 
-            var to = from + this.offset * 2;
-            if (to >= this.pagination.last_page) {
-                to = this.pagination.last_page;
-            }
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayArticulo = respuesta.articulos;
 
-            var pagesArray = [];
-            while (from <= to) {
-                pagesArray.push(from);
-                from++;
-            }
-            return pagesArray;
-        },
-        calcularTotal: function calcularTotal() {
-            var resultado = 0.0;
-            for (var i = 0; i < this.arrayDetalle.length; i++) {
-                resultado = resultado + (this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad - this.arrayDetalle[i].descuento);
-            }
-            return resultado;
+        if (me.arrayArticulo.length > 0) {
+          me.articulo = me.arrayArticulo[0]["nombre"];
+          me.idarticulo = me.arrayArticulo[0]["id"];
+          me.precio = me.arrayArticulo[0]["precio_venta"];
+          me.stock = me.arrayArticulo[0]["stock"];
+        } else {
+          me.articulo = "No existe producto";
+          me.idarticulo = 0;
         }
+      }).catch(function (error) {
+        console.log(error);
+      });
     },
-    methods: {
-        listarVenta: function listarVenta(page, buscar, criterio) {
-            var me = this;
-            var url = '/venta?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayVenta = respuesta.ventas.data;
-                me.pagination = respuesta.pagination;
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        selectCliente: function selectCliente(search, loading) {
-            var me = this;
-            loading(true);
-
-            var url = '/cliente/selectCliente?filtro=' + search;
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                q: search;
-                me.arrayCliente = respuesta.clientes;
-                loading(false);
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        getDatosCliente: function getDatosCliente(val1) {
-            var me = this;
-            me.loading = true;
-            me.idcliente = val1.id;
-        },
-        buscarArticulo: function buscarArticulo() {
-            var me = this;
-            var url = '/articulo/buscarArticuloVenta?filtro=' + me.codigo;
-
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayArticulo = respuesta.articulos;
-
-                if (me.arrayArticulo.length > 0) {
-                    me.articulo = me.arrayArticulo[0]['nombre'];
-                    me.idarticulo = me.arrayArticulo[0]['id'];
-                    me.precio = me.arrayArticulo[0]['precio_venta'];
-                    me.stock = me.arrayArticulo[0]['stock'];
-                } else {
-                    me.articulo = 'No existe producto';
-                    me.idarticulo = 0;
-                }
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        pdfVenta: function pdfVenta(id) {
-            window.open('/venta/pdf/' + id + ',' + '_blank');
-        },
-        cambiarPagina: function cambiarPagina(page, buscar, criterio) {
-            var me = this;
-            //Actualiza la página actual
-            me.pagination.current_page = page;
-            //Envia la petición para visualizar la data de esa página
-            me.listarVenta(page, buscar, criterio);
-        },
-        encuentra: function encuentra(id) {
-            var sw = 0;
-            /*for(var i=0;i<this.arrayDetalle.length;i++){
-                if(this.arrayDetalle[i].idarticulo==id){
-                    sw=true;
-                }
-            }*/
-            return sw;
-        },
-        eliminarDetalle: function eliminarDetalle(index) {
-            var me = this;
-            me.arrayDetalle.splice(index, 1);
-        },
-        agregarDetalle: function agregarDetalle() {
-            var me = this;
-            if (me.idarticulo == 0 || me.cantidad == 0 || me.precio == 0) {} else {
-                if (me.encuentra(me.idarticulo)) {
-                    swal({
-                        type: 'error',
-                        title: 'Error...',
-                        text: 'Ese producto ya se encuentra agregado!'
-                    });
-                } else {
-                    if (me.cantidad > me.stock) {
-                        swal({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'NO hay stock disponible!'
-                        });
-                    } else {
-                        me.arrayDetalle.push({
-                            idarticulo: me.idarticulo,
-                            articulo: me.articulo,
-                            cantidad: me.cantidad,
-                            precio: me.precio,
-                            descuento: me.descuento,
-                            stock: me.stock
-                        });
-                        me.codigo = "";
-                        me.idarticulo = 0;
-                        me.articulo = "";
-                        me.cantidad = 0;
-                        me.precio = 0;
-                        me.descuento = 0;
-                        me.stock = 0;
+    pdfVenta: function pdfVenta(id) {
+      window.open("/venta/pdf/" + id + "," + "_blank");
+    },
+    cambiarPagina: function cambiarPagina(page, buscar, criterio) {
+      var me = this;
+      //Actualiza la página actual
+      me.pagination.current_page = page;
+      //Envia la petición para visualizar la data de esa página
+      me.listarVenta(page, buscar, criterio);
+    },
+    encuentra: function encuentra(id) {
+      var sw = 0;
+      /*for(var i=0;i<this.arrayDetalle.length;i++){
+                    if(this.arrayDetalle[i].idarticulo==id){
+                        sw=true;
                     }
-                }
-            }
-        },
-        agregarDetalleModal: function agregarDetalleModal() {
-            var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            var me = this;
-            if (me.encuentra(data['id'])) {
-                swal({
-                    type: 'error',
-                    title: 'Error...',
-                    text: 'Ese producto ya se encuentra agregado!'
-                });
-            } else {
-                me.arrayDetalle.push({
-                    idarticulo: data['id'],
-                    articulo: data['nombre'],
-                    cantidad: 1,
-                    precio: data['precio_venta'],
-                    descuento: 0,
-                    stock: data['stock']
-                });
-            }
-        },
-        listarArticulo: function listarArticulo(buscar, criterio) {
-            var me = this;
-            var url = '/articulo/listarArticuloVenta?buscar=' + buscar + '&criterio=' + criterio;
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                me.arrayArticulo = respuesta.articulos.data;
-            }).catch(function (error) {
-                console.log(error);
+                }*/
+      return sw;
+    },
+    eliminarDetalle: function eliminarDetalle(index) {
+      var me = this;
+      me.arrayDetalle.splice(index, 1);
+    },
+    agregarDetalle: function agregarDetalle() {
+      var me = this;
+      if (me.idarticulo == 0 || me.cantidad == 0 || me.precio == 0) {} else {
+        if (me.encuentra(me.idarticulo)) {
+          swal({
+            type: "error",
+            title: "Error...",
+            text: "Ese producto ya se encuentra agregado!"
+          });
+        } else {
+          if (me.cantidad > me.stock) {
+            swal({
+              type: "error",
+              title: "Error...",
+              text: "NO hay stock disponible!"
             });
-        },
-        registrarVenta: function registrarVenta() {
-            if (this.validarVenta()) {
-                return;
-            }
-
-            var me = this;
-
-            axios.post('/venta/registrar', {
-                'idcliente': this.idcliente,
-                'tipo_comprobante': this.tipo_comprobante,
-                'serie_comprobante': this.serie_comprobante,
-                'num_comprobante': this.num_comprobante,
-                'impuesto': this.impuesto,
-                'total': this.total,
-                'data': this.arrayDetalle
-
-            }).then(function (response) {
-                me.listado = 1;
-                me.listarVenta(1, '', 'num_comprobante');
-                me.idcliente = 0;
-                me.tipo_comprobante = 'BOLETA';
-                me.serie_comprobante = '';
-                me.num_comprobante = '';
-                me.impuesto = 0.18;
-                me.total = 0.0;
-                me.idarticulo = 0;
-                me.articulo = '';
-                me.cantidad = 0;
-                me.precio = 0;
-                me.stock = 0;
-                me.codigo = '';
-                me.descuento = 0;
-                me.arrayDetalle = [];
-                window.open('/venta/pdf/' + response.data.id + ',' + '_blank');
-                //console.log(response.data.id);
-            }).catch(function (error) {
-                console.log(error);
+          } else {
+            me.arrayDetalle.push({
+              idarticulo: me.idarticulo,
+              articulo: me.articulo,
+              cantidad: me.cantidad,
+              precio: me.precio,
+              descuento: me.descuento,
+              stock: me.stock
             });
-        },
-        validarVenta: function validarVenta() {
-            var me = this;
-            me.errorVenta = 0;
-            me.errorMostrarMsjVenta = [];
-            var art;
-
-            me.arrayDetalle.map(function (x) {
-                if (x.cantidad > x.stock) {
-                    art = x.articulo + " con stock insuficiente";
-                    me.errorMostrarMsjVenta.push(art);
-                }
-            });
-
-            if (me.idcliente == 0) me.errorMostrarMsjVenta.push("Seleccione un Cliente");
-            if (me.tipo_comprobante == 0) me.errorMostrarMsjVenta.push("Seleccione el comprobante");
-            if (!me.num_comprobante) me.errorMostrarMsjVenta.push("Ingrese el número de comprobante");
-            if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de compra");
-            if (me.arrayDetalle.length <= 0) me.errorMostrarMsjVenta.push("Ingrese detalles");
-
-            if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
-
-            return me.errorVenta;
-        },
-        mostrarDetalle: function mostrarDetalle() {
-            var me = this;
-            me.listado = 0;
-
-            me.idproveedor = 0;
-            me.tipo_comprobante = 'BOLETA';
-            me.serie_comprobante = '';
-            me.num_comprobante = '';
-            me.impuesto = 0.18;
-            me.total = 0.0;
+            me.codigo = "";
             me.idarticulo = 0;
-            me.articulo = '';
+            me.articulo = "";
             me.cantidad = 0;
             me.precio = 0;
-            me.arrayDetalle = [];
-        },
-        ocultarDetalle: function ocultarDetalle() {
-            this.listado = 1;
-        },
-        verVenta: function verVenta(id) {
-            var me = this;
-            me.listado = 2;
-
-            //Obtener los datos del ingreso
-            var arrayVentaT = [];
-            var url = '/venta/obtenerCabecera?id=' + id;
-
-            axios.get(url).then(function (response) {
-                var respuesta = response.data;
-                arrayVentaT = respuesta.venta;
-
-                me.cliente = arrayVentaT[0]['nombre'];
-                me.tipo_comprobante = arrayVentaT[0]['tipo_comprobante'];
-                me.serie_comprobante = arrayVentaT[0]['serie_comprobante'];
-                me.num_comprobante = arrayVentaT[0]['num_comprobante'];
-                me.impuesto = arrayVentaT[0]['impuesto'];
-                me.total = arrayVentaT[0]['total'];
-            }).catch(function (error) {
-                console.log(error);
-            });
-
-            //Obtener los datos de los detalles 
-            var urld = '/venta/obtenerDetalles?id=' + id;
-
-            axios.get(urld).then(function (response) {
-                console.log(response);
-                var respuesta = response.data;
-                me.arrayDetalle = respuesta.detalles;
-            }).catch(function (error) {
-                console.log(error);
-            });
-        },
-        cerrarModal: function cerrarModal() {
-            this.modal = 0;
-            this.tituloModal = '';
-        },
-        abrirModal: function abrirModal() {
-            this.arrayArticulo = [];
-            this.modal = 1;
-            this.tituloModal = 'Seleccione uno o varios productos';
-        },
-        desactivarVenta: function desactivarVenta(id) {
-            var _this = this;
-
-            swal({
-                title: 'Esta seguro de anular esta venta?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
-            }).then(function (result) {
-                if (result.value) {
-                    var me = _this;
-
-                    axios.put('/venta/desactivar', {
-                        'id': id
-                    }).then(function (response) {
-                        me.listarVenta(1, '', 'num_comprobante');
-                        swal('Anulado!', 'La venta ha sido anulada con éxito.', 'success');
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                } else if (
-                // Read more about handling dismissals
-                result.dismiss === swal.DismissReason.cancel) {}
-            });
+            me.descuento = 0;
+            me.stock = 0;
+          }
         }
+      }
     },
-    mounted: function mounted() {
-        this.listarVenta(1, this.buscar, this.criterio);
+    agregarDetalleModal: function agregarDetalleModal() {
+      var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      var me = this;
+      if (me.encuentra(data["id"])) {
+        swal({
+          type: "error",
+          title: "Error...",
+          text: "Ese producto ya se encuentra agregado!"
+        });
+      } else {
+        me.arrayDetalle.push({
+          idarticulo: data["id"],
+          articulo: data["nombre"],
+          cantidad: 1,
+          precio: data["precio_venta"],
+          descuento: 0,
+          stock: data["stock"]
+        });
+      }
+    },
+    listarArticulo: function listarArticulo(buscar, criterio) {
+      var me = this;
+      var url = "/articulo/listarArticuloVenta?buscar=" + buscar + "&criterio=" + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        me.arrayArticulo = respuesta.articulos.data;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    registrarVenta: function registrarVenta() {
+      if (this.validarVenta()) {
+        return;
+      }
+
+      var me = this;
+
+      axios.post("/venta/registrar", {
+        idcliente: this.idcliente,
+        tipo_comprobante: this.tipo_comprobante,
+        serie_comprobante: this.serie_comprobante,
+        num_comprobante: this.num_comprobante,
+        impuesto: this.impuesto,
+        total: this.total,
+        data: this.arrayDetalle
+      }).then(function (response) {
+        me.listado = 1;
+        me.listarVenta(1, "", "num_comprobante");
+        me.idcliente = 0;
+        me.tipo_comprobante = "BOLETA";
+        me.serie_comprobante = "";
+        me.num_comprobante = "";
+        me.impuesto = 0.18;
+        me.total = 0.0;
+        me.idarticulo = 0;
+        me.articulo = "";
+        me.cantidad = 0;
+        me.precio = 0;
+        me.stock = 0;
+        me.codigo = "";
+        me.descuento = 0;
+        me.arrayDetalle = [];
+        window.open("/venta/pdf/" + response.data.id + "," + "_blank");
+        //console.log(response.data.id);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    validarVenta: function validarVenta() {
+      var me = this;
+      me.errorVenta = 0;
+      me.errorMostrarMsjVenta = [];
+      var art;
+
+      me.arrayDetalle.map(function (x) {
+        if (x.cantidad > x.stock) {
+          art = x.articulo + " con stock insuficiente";
+          me.errorMostrarMsjVenta.push(art);
+        }
+      });
+
+      if (me.idcliente == 0) me.errorMostrarMsjVenta.push("Seleccione un Cliente");
+      if (me.tipo_comprobante == 0) me.errorMostrarMsjVenta.push("Seleccione el comprobante");
+      if (!me.num_comprobante) me.errorMostrarMsjVenta.push("Ingrese el número de comprobante");
+      if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de compra");
+      if (me.arrayDetalle.length <= 0) me.errorMostrarMsjVenta.push("Ingrese detalles");
+
+      if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+
+      return me.errorVenta;
+    },
+    mostrarDetalle: function mostrarDetalle() {
+      var me = this;
+      me.listado = 0;
+
+      me.idproveedor = 0;
+      me.tipo_comprobante = "BOLETA";
+      me.serie_comprobante = "";
+      me.num_comprobante = "";
+      me.impuesto = 0.18;
+      me.total = 0.0;
+      me.idarticulo = 0;
+      me.articulo = "";
+      me.cantidad = 0;
+      me.precio = 0;
+      me.arrayDetalle = [];
+    },
+    ocultarDetalle: function ocultarDetalle() {
+      this.listado = 1;
+    },
+    verVenta: function verVenta(id) {
+      var me = this;
+      me.listado = 2;
+
+      //Obtener los datos del ingreso
+      var arrayVentaT = [];
+      var url = "/venta/obtenerCabecera?id=" + id;
+
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        arrayVentaT = respuesta.venta;
+
+        me.cliente = arrayVentaT[0]["nombre"];
+        me.tipo_comprobante = arrayVentaT[0]["tipo_comprobante"];
+        me.serie_comprobante = arrayVentaT[0]["serie_comprobante"];
+        me.num_comprobante = arrayVentaT[0]["num_comprobante"];
+        me.impuesto = arrayVentaT[0]["impuesto"];
+        me.total = arrayVentaT[0]["total"];
+      }).catch(function (error) {
+        console.log(error);
+      });
+
+      //Obtener los datos de los detalles
+      var urld = "/venta/obtenerDetalles?id=" + id;
+
+      axios.get(urld).then(function (response) {
+        console.log(response);
+        var respuesta = response.data;
+        me.arrayDetalle = respuesta.detalles;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    cerrarModal: function cerrarModal() {
+      this.modal = 0;
+      this.tituloModal = "";
+    },
+    abrirModal: function abrirModal() {
+      this.arrayArticulo = [];
+      this.modal = 1;
+      this.tituloModal = "Seleccione uno o varios productos";
+    },
+    desactivarVenta: function desactivarVenta(id) {
+      var _this = this;
+
+      swal({
+        title: "Esta seguro de anular esta venta?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar!",
+        cancelButtonText: "Cancelar",
+        confirmButtonClass: "btn btn-success",
+        cancelButtonClass: "btn btn-danger",
+        buttonsStyling: false,
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.value) {
+          var me = _this;
+
+          axios.put("/venta/desactivar", {
+            id: id
+          }).then(function (response) {
+            me.listarVenta(1, "", "num_comprobante");
+            swal("Anulado!", "La venta ha sido anulada con éxito.", "success");
+          }).catch(function (error) {
+            console.log(error);
+          });
+        } else if (
+        // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel) {}
+      });
     }
+  },
+  mounted: function mounted() {
+    this.listarVenta(1, this.buscar, this.criterio);
+  }
 });
 
 /***/ }),
@@ -69700,26 +71371,35 @@ var render = function() {
         "div",
         { staticClass: "card" },
         [
-          _c("div", { staticClass: "card-header" }, [
-            _c("i", { staticClass: "fa fa-align-justify" }),
-            _vm._v(" Ventas\n                        "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-secondary",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    _vm.mostrarDetalle()
-                  }
-                }
-              },
-              [
-                _c("i", { staticClass: "icon-plus" }),
-                _vm._v(" Nuevo\n                        ")
-              ]
-            )
-          ]),
+          _c(
+            "div",
+            { staticClass: "card-header" },
+            [
+              _c("i", { staticClass: "fa fa-align-justify" }),
+              _vm._v(" Ventas\n          "),
+              _vm.$parent.granted["AGREGAR_VENTAS"]
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.mostrarDetalle()
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "icon-plus" }),
+                        _vm._v(" Nuevo\n            ")
+                      ]
+                    )
+                  ]
+                : _vm._e()
+            ],
+            2
+          ),
           _vm._v(" "),
           _vm.listado == 1
             ? [
@@ -69827,7 +71507,7 @@ var render = function() {
                           },
                           [
                             _c("i", { staticClass: "fa fa-search" }),
-                            _vm._v(" Buscar")
+                            _vm._v(" Buscar\n                  ")
                           ]
                         )
                       ])
@@ -69864,45 +71544,52 @@ var render = function() {
                                     },
                                     [_c("i", { staticClass: "icon-eye" })]
                                   ),
-                                  _vm._v(
-                                    "  \n                                            "
-                                  ),
-                                  _c(
-                                    "button",
-                                    {
-                                      staticClass: "btn btn-info btn-sm",
-                                      attrs: { type: "button" },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.pdfVenta(venta.id)
-                                        }
-                                      }
-                                    },
-                                    [_c("i", { staticClass: "icon-doc" })]
-                                  ),
-                                  _vm._v(
-                                    "  \n                                            "
-                                  ),
-                                  venta.estado == "Registrado"
+                                  _vm._v("  \n                      "),
+                                  _vm.$parent.granted["GENERAR_REPORTE_VENTAS"]
                                     ? [
                                         _c(
                                           "button",
                                           {
-                                            staticClass:
-                                              "btn btn-danger btn-sm",
+                                            staticClass: "btn btn-info btn-sm",
                                             attrs: { type: "button" },
                                             on: {
                                               click: function($event) {
-                                                _vm.desactivarVenta(venta.id)
+                                                _vm.pdfVenta(venta.id)
                                               }
                                             }
                                           },
-                                          [
-                                            _c("i", {
-                                              staticClass: "icon-trash"
-                                            })
-                                          ]
-                                        )
+                                          [_c("i", { staticClass: "icon-doc" })]
+                                        ),
+                                        _vm._v("  \n                      ")
+                                      ]
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.$parent.granted["ACTUALIZAR_VENTAS"]
+                                    ? [
+                                        venta.estado == "Registrado"
+                                          ? [
+                                              _c(
+                                                "button",
+                                                {
+                                                  staticClass:
+                                                    "btn btn-danger btn-sm",
+                                                  attrs: { type: "button" },
+                                                  on: {
+                                                    click: function($event) {
+                                                      _vm.desactivarVenta(
+                                                        venta.id
+                                                      )
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass: "icon-trash"
+                                                  })
+                                                ]
+                                              )
+                                            ]
+                                          : _vm._e()
                                       ]
                                     : _vm._e()
                                 ],
@@ -70243,7 +71930,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-4" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", [
-                          _vm._v("Producto "),
+                          _vm._v("Producto\n                    "),
                           _c(
                             "span",
                             {
@@ -70344,7 +72031,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", [
-                          _vm._v("Precio "),
+                          _vm._v("Precio\n                    "),
                           _c(
                             "span",
                             {
@@ -70389,7 +72076,7 @@ var render = function() {
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
                         _c("label", [
-                          _vm._v("Cantidad "),
+                          _vm._v("Cantidad\n                    "),
                           _c(
                             "span",
                             {
@@ -70656,15 +72343,13 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("td", { staticClass: "text-right" }, [
                                         _vm._v(
-                                          "\n                                                " +
-                                            _vm._s(
-                                              parseFloat(
-                                                detalle.precio *
-                                                  detalle.cantidad -
-                                                  detalle.descuento
-                                              ).toFixed(2)
-                                            ) +
-                                            "\n                                            "
+                                          _vm._s(
+                                            parseFloat(
+                                              detalle.precio *
+                                                detalle.cantidad -
+                                                detalle.descuento
+                                            ).toFixed(2)
+                                          )
                                         )
                                       ])
                                     ])
@@ -70883,13 +72568,10 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
-                                          "\n                                                " +
-                                            _vm._s(
-                                              detalle.precio *
-                                                detalle.cantidad -
-                                                detalle.descuento
-                                            ) +
-                                            "\n                                            "
+                                          _vm._s(
+                                            detalle.precio * detalle.cantidad -
+                                              detalle.descuento
+                                          )
                                         )
                                       ])
                                     ])
@@ -71134,7 +72816,7 @@ var render = function() {
                         },
                         [
                           _c("i", { staticClass: "fa fa-search" }),
-                          _vm._v(" Buscar")
+                          _vm._v(" Buscar\n                  ")
                         ]
                       )
                     ])
@@ -71362,9 +73044,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("tr", [
       _c("td", { attrs: { colspan: "6" } }, [
-        _vm._v(
-          "\n                                                No hay productos agregados\n                                            "
-        )
+        _vm._v("No hay productos agregados")
       ])
     ])
   },
@@ -71416,9 +73096,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("tr", [
       _c("td", { attrs: { colspan: "5" } }, [
-        _vm._v(
-          "\n                                                No hay productos agregados\n                                            "
-        )
+        _vm._v("No hay productos agregados")
       ])
     ])
   },
@@ -74459,6 +76137,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -74815,22 +76495,34 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.arrayEmpresa, function(empresa) {
                   return _c("tr", { key: empresa.id }, [
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-warning btn-sm",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              _vm.abrirModal("empresa", "actualizar", empresa)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "icon-pencil" })]
-                      ),
-                      _vm._v("  \n                ")
-                    ]),
+                    _c(
+                      "td",
+                      [
+                        _vm.$parent.granted["ACTUALIZAR_EMPRESAS"]
+                          ? [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.abrirModal(
+                                        "empresa",
+                                        "actualizar",
+                                        empresa
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "icon-pencil" })]
+                              ),
+                              _vm._v("  \n                  ")
+                            ]
+                          : _vm._e()
+                      ],
+                      2
+                    ),
                     _vm._v(" "),
                     _c("td", {
                       domProps: { textContent: _vm._s(empresa.ruc) }

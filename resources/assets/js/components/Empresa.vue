@@ -50,13 +50,15 @@
             <tbody>
               <tr v-for="empresa in arrayEmpresa" :key="empresa.id">
                 <td>
-                  <button
-                    type="button"
-                    @click="abrirModal('empresa','actualizar',empresa)"
-                    class="btn btn-warning btn-sm"
-                  >
-                    <i class="icon-pencil"></i>
-                  </button> &nbsp;
+                  <template v-if="$parent.granted['ACTUALIZAR_EMPRESAS']">
+                    <button
+                      type="button"
+                      @click="abrirModal('empresa','actualizar',empresa)"
+                      class="btn btn-warning btn-sm"
+                    >
+                      <i class="icon-pencil"></i>
+                    </button> &nbsp;
+                  </template>
                 </td>
                 <td v-text="empresa.ruc"></td>
                 <td v-text="empresa.nombre"></td>

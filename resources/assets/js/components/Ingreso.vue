@@ -11,9 +11,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Ingresos
-          <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
-            <i class="icon-plus"></i>&nbsp;Nuevo
-          </button>
+          <template v-if="$parent.granted['AGREGAR_INGRESOS']">
+            <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
+              <i class="icon-plus"></i>&nbsp;Nuevo
+            </button>
+          </template>
         </div>
         <!-- Listado-->
         <template v-if="listado==1">
@@ -69,14 +71,16 @@
                       >
                         <i class="icon-eye"></i>
                       </button> &nbsp;
-                      <template v-if="ingreso.estado=='Registrado'">
-                        <button
-                          type="button"
-                          class="btn btn-danger btn-sm"
-                          @click="desactivarIngreso(ingreso.id)"
-                        >
-                          <i class="icon-trash"></i>
-                        </button>
+                      <template v-if="$parent.granted['ACTUALIZAR_INGRESOS']">
+                        <template v-if="ingreso.estado=='Registrado'">
+                          <button
+                            type="button"
+                            class="btn btn-danger btn-sm"
+                            @click="desactivarIngreso(ingreso.id)"
+                          >
+                            <i class="icon-trash"></i>
+                          </button>
+                        </template>
                       </template>
                     </td>
                     <td v-text="ingreso.usuario"></td>

@@ -76,7 +76,7 @@ class ProvinciaController extends Controller
         if (!$request->ajax()) return redirect('/');
         $provincia = Provincia::findOrFail($request->id);
         $provincia->iddepartamento = $request->iddepartamento;
-        $provincia->descripcion = $request->descripcion;
+        $provincia->descripcion = strtoupper($request->descripcion);
         $provincia->condicion = '1';
         $provincia->save();
     }

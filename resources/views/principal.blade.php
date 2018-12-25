@@ -61,10 +61,11 @@
                 </li>
             </ul>
         </header>
-
         <div class="app-body">
             
             @if(Auth::check())
+                @include('plantilla.sidebar')
+                <!--
                 @if (Auth::user()->idrol == 1)
                     @include('plantilla.sidebaradministrador')
                 @elseif (Auth::user()->idrol == 2)
@@ -74,7 +75,7 @@
                 @else
     
                 @endif
-    
+                -->
             @endif
             <!-- Contenido Principal -->
             @yield('contenido')

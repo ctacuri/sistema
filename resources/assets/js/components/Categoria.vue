@@ -9,9 +9,11 @@
         <div class="card">
             <div class="card-header">
                 <i class="fa fa-align-justify"></i> Categorías
-                <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-secondary">
-                    <i class="icon-plus"></i>&nbsp;Nuevo
-                </button>
+                <template v-if="$parent.granted['AGREGAR_CATEGORIAS']">
+                    <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-secondary">
+                        <i class="icon-plus"></i>&nbsp;Nuevo
+                    </button>
+                </template>
             </div>
             <div class="card-body">
                 <div class="form-group row">
@@ -38,18 +40,20 @@
                     <tbody>
                         <tr v-for="categoria in arrayCategoria" :key="categoria.id">
                             <td>
-                                <button type="button" @click="abrirModal('categoria','actualizar',categoria)" class="btn btn-warning btn-sm">
-                                    <i class="icon-pencil"></i>
-                                </button> &nbsp;
-                                <template v-if="categoria.condicion">
-                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
-                                        <i class="icon-trash"></i>
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(categoria.id)">
-                                        <i class="icon-check"></i>
-                                    </button>
+                                <template v-if="$parent.granted['ACTUALIZAR_CATEGORIAS']">
+                                    <button type="button" @click="abrirModal('categoria','actualizar',categoria)" class="btn btn-warning btn-sm">
+                                        <i class="icon-pencil"></i>
+                                    </button> &nbsp;
+                                    <template v-if="categoria.condicion">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(categoria.id)">
+                                            <i class="icon-check"></i>
+                                        </button>
+                                    </template>
                                 </template>
                             </td>
                             <td v-text="categoria.nombre"></td>

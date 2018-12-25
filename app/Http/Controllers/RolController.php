@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Rol;
+use App\RolPermiso;
+use DB;
 
 class RolController extends Controller
 {
@@ -44,4 +46,79 @@ class RolController extends Controller
         return ['roles' => $roles];
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $rol = new Rol();
+        $rol->nombre = strtoupper($request->nombre);
+        $rol->descripcion = strtoupper($request->descripcion);
+        $rol->condicion = '1';
+        $rol->save();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $rol = Rol::findOrFail($request->id);
+        $rol->nombre = strtoupper($request->nombre);
+        $rol->descripcion = strtoupper($request->descripcion);
+        //$rol->condicion = '1';
+        $rol->save();
+    }
+
+    /* Permisos de rol */
+    public function obtenerPermisosDeRol(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $rol = Rol::findOrFail($request->id);
+
+        return ['permisos' => $rol->permisos()];
+    }
+    public function updatePermisosDeRol(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $idrol = $request->id;
+        $rol = Rol::findOrFail($idrol);
+        $permisosDeRol = $rol->permisos();
+
+        $checkedPermisos =  $request->checked;
+       
+        foreach ($permisosDeRol as $permiso) {
+            $idpermiso = $permiso->id;
+            $valor = 0;
+            if (in_array($idpermiso, $checkedPermisos)) {
+                $valor = 1;
+            }
+
+            $rolpermiso = RolPermiso::where('idrol', '=', $idrol)
+            ->where('idpermiso', '=', $idpermiso)
+            ->first();
+
+            if($rolpermiso == null && $valor == 1)
+            {
+                $rolpermiso = new RolPermiso();
+                $rolpermiso->idrol = $idrol;
+                $rolpermiso->idpermiso = $idpermiso;
+                $rolpermiso->valor = $valor;
+                $rolpermiso->save();
+            }
+            elseif($rolpermiso != null && $rolpermiso->valor != $valor){                
+                DB::update('update rol_permiso set valor = ? where idrol = ? and idpermiso = ?', [$valor,$idrol,$idpermiso]);
+            }
+        }
+    }
 }

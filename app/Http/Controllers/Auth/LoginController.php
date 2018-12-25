@@ -43,4 +43,14 @@ class LoginController extends Controller
         $request->session()->invalidate();
         return redirect('/');
     }
+
+    public function granted(){
+        $granted = [];
+        if(Auth::check()){
+            $granted = array_filter(Auth::user()->privilegios(), function($val, $key) {
+                return $val == 1;
+            }, ARRAY_FILTER_USE_BOTH);
+        }
+        return $granted;
+    }
 }

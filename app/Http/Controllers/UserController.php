@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\User;
 use App\Persona;
+use App\UserPermiso;
 use Illuminate\Support\Facades\DB; //Me permite trabajar con gestion de transacciones
 
 use Illuminate\Http\Request;
@@ -140,4 +141,49 @@ class UserController extends Controller
         $user->condicion = '1';
         $user->save();
     }
+
+     /* Permisos de usuario */
+     public function obtenerPermisosDeUsuario(Request $request)
+     {
+         if (!$request->ajax()) return redirect('/');
+         $user = User::findOrFail($request->id);
+ 
+         return ['permisos' => $user->permisos()];
+     }
+     public function updatePermisosDeUsuario(Request $request)
+     {
+         if (!$request->ajax()) return redirect('/');
+ 
+         $iduser = $request->id;
+         $user = User::findOrFail($iduser);
+         $permisosDeUsuario = $user->permisos();
+ 
+         $checkedPermisos =  $request->checked;
+        
+         foreach ($permisosDeUsuario as $permiso) {
+             $idpermiso = $permiso->id;
+             $valor = 0;
+             if (in_array($idpermiso, $checkedPermisos)) {
+                 $valor = 1;
+             }
+ 
+             $userpermiso = UserPermiso::where('iduser', '=', $iduser)
+             ->where('idpermiso', '=', $idpermiso)
+             ->first();
+ 
+             if($userpermiso == null && $valor == 1)
+             {
+                 $userpermiso = new UserPermiso();
+                 $userpermiso->iduser = $iduser;
+                 $userpermiso->idpermiso = $idpermiso;
+                 $userpermiso->valor = $valor;
+                 $userpermiso->save();
+             }
+             elseif($userpermiso != null && $userpermiso->valor != $valor){
+                 DB::update('update user_permiso set valor = ? where iduser = ? and idpermiso = ?', [$valor,$iduser,$idpermiso]);
+             }
+         }
+ 
+         return ['checked' => $request->checked, 'id' => $request->id, 'userpermiso' => $userpermiso];
+     }
 }

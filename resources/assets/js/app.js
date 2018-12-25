@@ -39,13 +39,21 @@ const app = new Vue({
     el: '#app',
     data :{
         menu : 0,
-        notifications: []
+        notifications: [],
+        granted: []
     },
     created(){
         let me = this;
         axios.post('/notification/get').then(function(response){
             //console.log(response.data);
             me.notifications = response.data;
+        }).catch(function(error){
+            console.log(error);
+        });
+
+        axios.get('/logged/granted').then(function(response){
+            console.log('granted', response.data);
+            me.granted = response.data;
         }).catch(function(error){
             console.log(error);
         });

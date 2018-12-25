@@ -9,18 +9,26 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fa fa-align-justify"></i> Productos
-                    <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
-                        <i class="icon-doc"></i>&nbsp;Nuevo
-                    </button>
-                    <button type="button" @click="abrirModal('articulo','importar')" class="btn btn-secondary">
-                        <i class="icon-cloud-upload"></i>&nbsp;Importar
-                    </button>
-                    <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-info">
-                        <i class="icon-plus"></i>&nbsp;Categoria
-                    </button>
-                    <button type="button" @click="cargarPdf()" class="btn btn-info">
-                        <i class="icon-notebook"></i>&nbsp;Reporte
-                    </button>
+                    <template v-if="$parent.granted['AGREGAR_PRODUCTOS']">
+                        <button type="button" @click="abrirModal('articulo','registrar')" class="btn btn-secondary">
+                            <i class="icon-doc"></i>&nbsp;Nuevo
+                        </button>
+                    </template>
+                    <template v-if="$parent.granted['IMPORTAR_PRODUCTOS']">
+                        <button type="button" @click="abrirModal('articulo','importar')" class="btn btn-secondary">
+                            <i class="icon-cloud-upload"></i>&nbsp;Importar
+                        </button>
+                    </template>
+                    <template v-if="$parent.granted['AGREGAR_CATEGORIAS']">
+                        <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-info">
+                            <i class="icon-plus"></i>&nbsp;Categoria
+                        </button>
+                    </template>
+                    <template v-if="$parent.granted['GENERAR_REPORTE_PRODUCTOS']">
+                        <button type="button" @click="cargarPdf()" class="btn btn-info">
+                            <i class="icon-notebook"></i>&nbsp;Reporte
+                        </button>
+                    </template>
                 </div>
                 <div class="card-body">
                     <div class="form-group row">
@@ -51,18 +59,20 @@
                         <tbody>
                             <tr v-for="articulo in arrayArticulo" :key="articulo.id">
                                 <td>
-                                    <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
-                                        <i class="icon-pencil"></i>
-                                    </button> &nbsp;
-                                    <template v-if="articulo.condicion">
-                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
-                                            <i class="icon-trash"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
-                                            <i class="icon-check"></i>
-                                        </button>
+                                    <template v-if="$parent.granted['ACTUALIZAR_PRODUCTOS']">
+                                        <button type="button" @click="abrirModal('articulo','actualizar',articulo)" class="btn btn-warning btn-sm">
+                                            <i class="icon-pencil"></i>
+                                        </button> &nbsp;
+                                        <template v-if="articulo.condicion">
+                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarArticulo(articulo.id)">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="btn btn-info btn-sm" @click="activarArticulo(articulo.id)">
+                                                <i class="icon-check"></i>
+                                            </button>
+                                        </template>
                                     </template>
                                 </td>
                                 <td v-text="articulo.codigo"></td>
@@ -207,7 +217,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Archivo CSV a importar</label>
+                                <label class="col-md-3 form-control-label" for="text-input">Delimitador</label>
                                 <div class="col-md-6">
                                     <select class="form-control" v-model="delimitador">
                                         <option value=",">coma ( , )</option>

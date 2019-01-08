@@ -167,6 +167,7 @@ Route::group(['middleware' => ['auth']], function () {
             return abort(403,'Acción no autorizada.');
         }
     });
+    Route::post('/rol/registrar', 'RolController@store');
     Route::put('/rol/actualizar', 'RolController@update');
     Route::get('/rol/selectRol', 'RolController@selectRol');
     Route::get('/rol/obtenerPermisosDeRol', 'RolController@obtenerPermisosDeRol');

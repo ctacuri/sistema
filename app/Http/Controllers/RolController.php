@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Rol;
 use App\RolPermiso;
 use DB;
+use Auth;
 
 class RolController extends Controller
 {
@@ -17,12 +18,16 @@ class RolController extends Controller
         $criterio = $request->criterio;
          
         if ($buscar==''){
-            $roles = Rol::orderBy('id', 'desc')->paginate(6);
+            $roles = Rol::orderBy('id', 'desc');
         }
         else{
-            $roles = Rol::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc')->paginate(6);
+            $roles = Rol::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc');
         }
          
+        // Filtro multiempresa 
+        $roles->whereIn('idempresa', array(0,Auth::user()->idempresa));
+
+        $roles = $roles->paginate(6);
  
         return [
             'pagination' => [
@@ -41,7 +46,12 @@ class RolController extends Controller
     {
         $roles = Rol::where('condicion', '=', '1')
         ->select('id','nombre')
-        ->orderBy('nombre','asc')->get();
+        ->orderBy('nombre','asc');
+
+        // Filtro multiempresa 
+        $roles->whereIn('idempresa', array(0,Auth::user()->idempresa));
+        
+        $roles = $roles->get();
 
         return ['roles' => $roles];
     }
@@ -56,6 +66,7 @@ class RolController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $rol = new Rol();
+        $rol->idempresa = Auth::user()->idempresa;
         $rol->nombre = strtoupper($request->nombre);
         $rol->descripcion = strtoupper($request->descripcion);
         $rol->condicion = '1';
@@ -73,11 +84,29 @@ class RolController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         $rol = Rol::findOrFail($request->id);
+        //$rol->idempresa = Auth::user()->idempresa;
         $rol->nombre = strtoupper($request->nombre);
         $rol->descripcion = strtoupper($request->descripcion);
         //$rol->condicion = '1';
         $rol->save();
     }
+
+    public function desactivar(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $rol = Rol::findOrFail($request->id);
+        $rol->condicion = '0';
+        $rol->save();
+    }
+
+    public function activar(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+        $rol = Rol::findOrFail($request->id);
+        $rol->condicion = '1';
+        $rol->save();
+    }
+
 
     /* Permisos de rol */
     public function obtenerPermisosDeRol(Request $request)

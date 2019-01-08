@@ -64628,6 +64628,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -64639,6 +64661,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       arrayRol: [],
       modal: 0,
       tituloModal: "",
+      tipoAccion: 0,
       errorRol: 0,
       errorMostrarMsjRol: [],
 
@@ -64710,6 +64733,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       me.pagination.current_page = page;
       //Envia la petición para visualizar la data de esa página
       me.listarRol(page, buscar, criterio);
+    },
+    registrarRol: function registrarRol() {
+      if (this.validarRol()) {
+        return;
+      }
+
+      var me = this;
+
+      axios.post("/rol/registrar", {
+        nombre: this.nombre,
+        descripcion: this.descripcion
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarRol(1, "", "nombre");
+      }).catch(function (error) {
+        console.log(error);
+      });
     },
     actualizarRol: function actualizarRol() {
       if (this.validarRol()) {
@@ -64784,6 +64824,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         case "rol":
           {
             switch (accion) {
+              case "registrar":
+                {
+                  this.modal = 1;
+                  this.tituloModal = "Registrar Rol";
+                  this.nombre = "";
+                  this.descripcion = "";
+                  this.tipoAccion = 1;
+                  break;
+                }
               case "actualizar":
                 {
                   //console.log(data);
@@ -64792,6 +64841,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                   this.rol_id = data["id"];
                   this.nombre = data["nombre"];
                   this.descripcion = data["descripcion"];
+                  this.tipoAccion = 2;
                   break;
                 }
               case "permisos":
@@ -64849,7 +64899,35 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "container-fluid" }, [
       _c("div", { staticClass: "card" }, [
-        _vm._m(1),
+        _c(
+          "div",
+          { staticClass: "card-header" },
+          [
+            _c("i", { staticClass: "fa fa-align-justify" }),
+            _vm._v(" Roles\n          "),
+            _vm.$parent.granted["AGREGAR_ROLES"]
+              ? [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.abrirModal("rol", "registrar")
+                        }
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "icon-doc" }),
+                      _vm._v(" Nuevo\n            ")
+                    ]
+                  )
+                ]
+              : _vm._e()
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "form-group row" }, [
@@ -64949,7 +65027,7 @@ var render = function() {
             "table",
             { staticClass: "table table-bordered table-striped table-sm" },
             [
-              _vm._m(2),
+              _vm._m(1),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -64960,37 +65038,49 @@ var render = function() {
                       [
                         _vm.$parent.granted["ACTUALIZAR_ROLES"]
                           ? [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-warning btn-sm",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.abrirModal("rol", "actualizar", rol)
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "icon-pencil" })]
-                              ),
-                              _vm._v("  \n                    "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-warning btn-sm",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.abrirModal("rol", "permisos", rol)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("i", {
-                                    staticClass: "icon-user-following"
-                                  })
-                                ]
-                              )
+                              rol.idempresa != 0
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-warning btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.abrirModal(
+                                              "rol",
+                                              "actualizar",
+                                              rol
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_c("i", { staticClass: "icon-pencil" })]
+                                    ),
+                                    _vm._v("  \n                      "),
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-warning btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.abrirModal(
+                                              "rol",
+                                              "permisos",
+                                              rol
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "icon-user-following"
+                                        })
+                                      ]
+                                    )
+                                  ]
+                                : [_c("span", [_vm._v("Rol de sistema")])]
                             ]
                           : _vm._e()
                       ],
@@ -65284,19 +65374,37 @@ var render = function() {
                   [_vm._v("Cerrar")]
                 ),
                 _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        _vm.actualizarRol()
-                      }
-                    }
-                  },
-                  [_vm._v("Actualizar")]
-                )
+                _vm.tipoAccion == 1
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.registrarRol()
+                          }
+                        }
+                      },
+                      [_vm._v("Guardar")]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.tipoAccion == 2
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.actualizarRol()
+                          }
+                        }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  : _vm._e()
               ])
             ])
           ]
@@ -65369,7 +65477,7 @@ var render = function() {
                         { staticClass: "col-md-12" },
                         [
                           _vm.permisos && _vm.permisos.length == 0
-                            ? [_vm._m(3)]
+                            ? [_vm._m(2)]
                             : _vm.permisos && _vm.permisos.length > 0
                             ? [
                                 _c(
@@ -65457,7 +65565,7 @@ var render = function() {
                                 )
                               ]
                             : _vm.permisos == false
-                            ? [_vm._m(4)]
+                            ? [_vm._m(3)]
                             : _vm._e()
                         ],
                         2
@@ -65554,15 +65662,6 @@ var staticRenderFns = [
       _c("li", { staticClass: "breadcrumb-item" }, [
         _c("a", { attrs: { href: "/" } }, [_vm._v("Escritorio")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("i", { staticClass: "fa fa-align-justify" }),
-      _vm._v(" Roles\n        ")
     ])
   },
   function() {

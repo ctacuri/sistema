@@ -11,6 +11,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Roles
+          <template v-if="$parent.granted['AGREGAR_ROLES']">
+            <button type="button" @click="abrirModal('rol','registrar')" class="btn btn-secondary">
+              <i class="icon-doc"></i>&nbsp;Nuevo
+            </button>
+          </template>
         </div>
         <div class="card-body">
           <div class="form-group row">
@@ -46,20 +51,25 @@
               <tr v-for="rol in arrayRol" :key="rol.id">
                 <td>
                   <template v-if="$parent.granted['ACTUALIZAR_ROLES']">
-                    <button
-                      type="button"
-                      @click="abrirModal('rol','actualizar',rol)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      <i class="icon-pencil"></i>
-                    </button> &nbsp;
-                    <button
-                      type="button"
-                      @click="abrirModal('rol','permisos',rol)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      <i class="icon-user-following"></i>
-                    </button>
+                    <template v-if="rol.idempresa != 0">
+                      <button
+                        type="button"
+                        @click="abrirModal('rol','actualizar',rol)"
+                        class="btn btn-warning btn-sm"
+                      >
+                        <i class="icon-pencil"></i>
+                      </button> &nbsp;
+                      <button
+                        type="button"
+                        @click="abrirModal('rol','permisos',rol)"
+                        class="btn btn-warning btn-sm"
+                      >
+                        <i class="icon-user-following"></i>
+                      </button>
+                    </template>
+                    <template v-else>
+                      <span>Rol de sistema</span>
+                    </template>
                   </template>
                 </td>
                 <td v-text="rol.nombre"></td>
@@ -110,6 +120,7 @@
       </div>
       <!-- Fin ejemplo de tabla Listado -->
     </div>
+
     <!--Inicio del modal agregar/actualizar-->
     <div
       class="modal fade"
@@ -161,7 +172,18 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" class="btn btn-primary" @click="actualizarRol()">Actualizar</button>
+            <button
+              type="button"
+              v-if="tipoAccion==1"
+              class="btn btn-primary"
+              @click="registrarRol()"
+            >Guardar</button>
+            <button
+              type="button"
+              v-if="tipoAccion==2"
+              class="btn btn-primary"
+              @click="actualizarRol()"
+            >Actualizar</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -274,6 +296,7 @@ export default {
       arrayRol: [],
       modal: 0,
       tituloModal: "",
+      tipoAccion: 0,
       errorRol: 0,
       errorMostrarMsjRol: [],
 
@@ -348,6 +371,26 @@ export default {
       me.pagination.current_page = page;
       //Envia la petición para visualizar la data de esa página
       me.listarRol(page, buscar, criterio);
+    },
+    registrarRol() {
+      if (this.validarRol()) {
+        return;
+      }
+
+      let me = this;
+
+      axios
+        .post("/rol/registrar", {
+          nombre: this.nombre,
+          descripcion: this.descripcion
+        })
+        .then(function(response) {
+          me.cerrarModal();
+          me.listarRol(1, "", "nombre");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     actualizarRol() {
       if (this.validarRol()) {
@@ -428,6 +471,14 @@ export default {
       switch (modelo) {
         case "rol": {
           switch (accion) {
+            case "registrar": {
+              this.modal = 1;
+              this.tituloModal = "Registrar Rol";
+              this.nombre = "";
+              this.descripcion = "";
+              this.tipoAccion = 1;
+              break;
+            }
             case "actualizar": {
               //console.log(data);
               this.modal = 1;
@@ -435,6 +486,7 @@ export default {
               this.rol_id = data["id"];
               this.nombre = data["nombre"];
               this.descripcion = data["descripcion"];
+              this.tipoAccion = 2;
               break;
             }
             case "permisos": {

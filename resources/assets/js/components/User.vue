@@ -3,52 +3,68 @@
     <!-- Breadcrumb -->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="/">Escritorio</a>
+        <a href="#">Escritorio</a>
       </li>
+      <li class="breadcrumb-item">
+        <a href="#">Acceso</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
     </ol>
+    <!-- / End Breadcrumb -->
     <div class="container-fluid">
-      <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Usuarios
-          <template v-if="$parent.granted['AGREGAR_USUARIOS']">
-            <button
-              type="button"
-              @click="abrirModal('persona','registrar')"
-              class="btn btn-secondary"
-            >
-              <i class="icon-plus"></i>&nbsp;Nuevo
-            </button>
-          </template>
+          <!-- Title -->
+          <h3>
+            <i class="icon-user"></i> Usuarios
+          </h3>
+          <!-- / End Title -->
+          <!-- Header Options -->
+          <div class="card-header-options">
+            <template v-if="$parent.granted['AGREGAR_USUARIOS']">
+              <button type="button" @click="abrirModal('persona','registrar')" class="btn btn-link">
+                <i class="icon-plus"></i>&nbsp;Agregar usuario
+              </button>
+            </template>
+          </div>
+          <!-- / End Header Options -->
         </div>
         <div class="card-body">
+          <!-- Filter Form -->
           <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="input-group">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="nombre">Nombre</option>
-                  <option value="num_documento">Documento</option>
-                  <option value="email">Email</option>
-                  <option value="telefono">Teléfono</option>
-                </select>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Filtro</span>
+                  <select class="custom-select" v-model="criterio">
+                    <option value="nombre" selected>Por nombre</option>
+                    <option value="num_documento">Por documento</option>
+                    <option value="email">Por e-mail</option>
+                    <option value="telefono">Por teléfono</option>
+                  </select>
+                </div>
                 <input
                   type="text"
-                  v-model="buscar"
-                  @keyup.enter="listarPersona(1,buscar,criterio)"
                   class="form-control"
-                  placeholder="Texto a buscar"
+                  placeholder="Texto a buscar..."
+                  @keyup.enter="listarPersona(1,buscar,criterio)"
+                  v-model="buscar"
                 >
-                <button
-                  type="submit"
-                  @click="listarPersona(1,buscar,criterio)"
-                  class="btn btn-primary"
-                >
-                  <i class="fa fa-search"></i> Buscar
-                </button>
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    @click="listarPersona(1,buscar,criterio)"
+                  >
+                    <i class="fa fa-search"></i> Buscar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          <table class="table table-bordered table-striped table-sm">
+          <!-- / End Filter Form -->
+          <!-- Table Records -->
+          <table class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>Opciones</th>
@@ -65,40 +81,44 @@
             <tbody>
               <tr v-for="persona in arrayPersona" :key="persona.id">
                 <td>
-                  <template v-if="$parent.granted['ACTUALIZAR_USUARIOS']">
-                    <button
-                      type="button"
-                      @click="abrirModal('persona','actualizar',persona)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      <i class="icon-pencil"></i>
-                    </button> &nbsp;
-                    <button
-                      type="button"
-                      @click="abrirModal('persona','permisos',persona)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      <i class="icon-user-following"></i>
-                    </button> &nbsp;
-                    <template v-if="persona.condicion">
+                  <!-- Row Options -->
+                  <div class="row-options">
+                    <template v-if="$parent.granted['ACTUALIZAR_USUARIOS']">
                       <button
                         type="button"
-                        class="btn btn-danger btn-sm"
-                        @click="desactivarUsuario(persona.id)"
+                        @click="abrirModal('persona','actualizar',persona)"
+                        class="btn btn-link"
                       >
-                        <i class="icon-trash"></i>
-                      </button>
-                    </template>
-                    <template v-else>
+                        <i class="icon-pencil"></i>
+                      </button> &nbsp;
                       <button
                         type="button"
-                        class="btn btn-info btn-sm"
-                        @click="activarUsuario(persona.id)"
+                        @click="abrirModal('persona','permisos',persona)"
+                        class="btn btn-link"
                       >
-                        <i class="icon-check"></i>
-                      </button>
+                        <i class="icon-user-following"></i>
+                      </button> &nbsp;
+                      <template v-if="persona.condicion">
+                        <button
+                          type="button"
+                          class="btn btn-link"
+                          @click="desactivarUsuario(persona.id)"
+                        >
+                          <i class="icon-trash"></i>
+                        </button>
+                      </template>
+                      <template v-else>
+                        <button
+                          type="button"
+                          class="btn btn-link"
+                          @click="activarUsuario(persona.id)"
+                        >
+                          <i class="icon-check"></i>
+                        </button>
+                      </template>
                     </template>
-                  </template>
+                  </div>
+                  <!-- / End Row Options -->
                 </td>
                 <td v-text="persona.nombre"></td>
                 <td v-text="persona.tipo_documento"></td>
@@ -111,14 +131,18 @@
               </tr>
             </tbody>
           </table>
+          <!-- / End Table Records -->
+          <!-- Pagination -->
           <nav>
-            <ul class="pagination">
-              <li class="page-item" v-if="pagination.current_page > 1">
+            <ul class="pagination" v-if="pagesNumber.length > 1">
+              <li class="page-item" v-bind:class="{'disabled': pagination.current_page == 1}">
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)"
-                >Ant</a>
+                >
+                  <i class="icon-arrow-left"></i>
+                </a>
               </li>
               <li
                 class="page-item"
@@ -133,24 +157,32 @@
                   v-text="page"
                 ></a>
               </li>
-              <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+              <li
+                class="page-item"
+                v-bind:class="{'disabled': pagination.current_page == pagination.last_page}"
+              >
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)"
-                >Sig</a>
+                >
+                  <i class="icon-arrow-right"></i>
+                </a>
               </li>
             </ul>
           </nav>
+          <!-- / End Pagination -->
         </div>
       </div>
-      <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Inicio del modal agregar/actualizar-->
+    <!-- 
+      ** MODALS **
+    -->
+    <!-- Create / Update Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modal}"
+      :class="{'show-modal' : modal}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -158,125 +190,148 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
+            <h4 class="modal-title" v-html="tituloModal"></h4>
             <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Nombre (*)</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="nombre"
-                    class="form-control text-uppercase"
-                    placeholder="Nombre de la persona"
-                  >
+            <form action method="post" enctype="multipart/form-data" class="vf-form">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Nombre</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Nombre de la persona"
+                  v-model="nombre"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Tipo Documento</label>
-                <div class="col-md-9">
-                  <select v-model="tipo_documento" class="form-control">
-                    <option value="DNI">DNI</option>
-                    <option value="RUC">RUC</option>
-                    <option value="CEDULA">CEDULA</option>
-                    <option value="PASS">PASS</option>
-                  </select>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Tipo de documento</span>
                 </div>
+                <select
+                  class="custom-select"
+                  required="required"
+                  v-model="tipo_documento"
+                  v-bind:class="{'placeholder': !(tipo_documento || false) }"
+                >
+                  <option disabled value="">Tipo de documento</option>
+                  <option value="DNI">DNI</option>
+                  <option value="RUC">RUC</option>
+                  <option value="CEDULA">CEDULA</option>
+                  <option value="PASS">PASS</option>
+                </select>
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Número documento</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="num_documento"
-                    class="form-control text-uppercase"
-                    placeholder="Número de documento"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Número de documento</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Número de documento"
+                  v-model="num_documento"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Dirección</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="direccion"
-                    class="form-control text-uppercase"
-                    placeholder="Dirección"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Dirección</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Dirección"
+                  v-model="direccion"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Teléfono</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="telefono"
-                    class="form-control text-uppercase"
-                    placeholder="Teléfono"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Teléfono</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Teléfono"
+                  v-model="telefono"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Email</label>
-                <div class="col-md-9">
-                  <input
-                    type="email"
-                    v-model="email"
-                    class="form-control text-uppercase"
-                    placeholder="Email"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Email</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Email"
+                  v-model="email"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Rol (*)</label>
-                <div class="col-md-9">
-                  <select class="form-control" v-model="idrol">
-                    <option value="0">Seleccione un rol</option>
-                    <option
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Rol</span>
+                </div>
+                <select
+                  class="custom-select"
+                  required="required"
+                  v-model="idrol"
+                  v-bind:class="{'placeholder': !(idrol || false) }"
+                >
+                  <option disabled value="0">Seleccione un rol</option>
+                  <option
                       v-for="rol in arrayRol"
                       :key="rol.id"
                       :value="rol.id"
                       v-text="rol.nombre"
                     ></option>
-                  </select>
-                </div>
+                </select>
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Usuario (*)</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="usuario"
-                    class="form-control"
-                    placeholder="Nombre de usuario"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Usuario</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Nombre de usuario"
+                  v-model="usuario"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Password (*)</label>
-                <div class="col-md-9">
-                  <input
-                    type="password"
-                    v-model="password"
-                    class="form-control"
-                    placeholder="Password de acceso"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Password</span>
                 </div>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Password de acceso"
+                  v-model="password"
+                >
               </div>
-              <div v-show="errorPersona" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjPersona" :key="error" v-text="error"></div>
+
+              <div v-show="errorPersona" class="modal-errors">
+                <div
+                  v-for="error in errorMostrarMsjPersona"
+                  :key="error"
+                  class="alert alert-warning"
+                  role="alert"
+                >
+                  <i class="icon-ban"></i>
+                  <em v-text="error"></em>
                 </div>
               </div>
             </form>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+            <button type="button" class="btn btn-link" @click="cerrarModal()">Cancelar</button>
             <button
               type="button"
               v-if="tipoAccion==1"
@@ -290,17 +345,17 @@
               @click="actualizarPersona()"
             >Actualizar</button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
-    <!--Inicio del modal permisos-->
+    <!-- / End Update Modal -->
+    
+    <!-- Permissions Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modalPermisos}"
+      :class="{'show-modal' : modalPermisos}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -308,16 +363,19 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModalPermisos"></h4>
+            <h4 class="modal-title" v-html="tituloModalPermisos"></h4>
             <button type="button" class="close" @click="cerrarModalPermisos()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group row">
-                <div class="col-md-12">
+            <form action method="post" enctype="multipart/form-data" class="vf-form">
+              <div class="row">
+                <div class="col-sm-12">
                   <template v-if="permisos && permisos.length == 0">
                     <div>
                       <em>Cargando permisos</em>
@@ -329,6 +387,9 @@
                     </div>
                   </template>
                   <template v-else-if="permisos && permisos.length > 0">
+                    <div class="info-block">
+                      <p>Active los permisos que desea asignarle al usuario.</p>
+                    </div>
                     <div class="checkbox-list-wrapper">
                       <ul class="checkbox-list">
                         <li v-for="permiso in permisos" v-bind:key="permiso.id">
@@ -352,20 +413,29 @@
                   </template>
                 </div>
               </div>
-              <div v-show="errorPermisos" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjPermisos" :key="error" v-text="error"></div>
+
+              <div v-show="errorPermisos" class="modal-errors">
+                <div
+                  v-for="error in errorMostrarMsjPermisos"
+                  :key="error"
+                  class="alert alert-warning"
+                  role="alert"
+                >
+                  <i class="icon-ban"></i>
+                  <em v-text="error"></em>
                 </div>
               </div>
             </form>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
             <button
               type="button"
               v-bind:disabled="procesandoPermisos"
               class="btn btn-secondary"
               @click="cerrarModalPermisos()"
-            >Cerrar</button>
+            >Cancelar</button>
             <button
               v-if="permisos && permisos.length > 0"
               type="button"
@@ -381,12 +451,11 @@
               </span>
             </button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
+    <!-- / End Permissions Modal -->
   </main>
 </template>
 
@@ -397,7 +466,7 @@ export default {
       persona_id: 0,
 
       nombre: "",
-      tipo_documento: "DNI",
+      tipo_documento: "",
       num_documento: "",
       direccion: "",
       telefono: "",
@@ -604,7 +673,7 @@ export default {
       this.modal = 0;
       this.tituloModal = "";
       this.nombre = "";
-      this.tipo_documento = "DNI";
+      this.tipo_documento = "";
       this.num_documento = "";
       this.direccion = "";
       this.telefono = "";
@@ -629,9 +698,9 @@ export default {
           switch (accion) {
             case "registrar": {
               this.modal = 1;
-              this.tituloModal = "Registrar Usuario";
+              this.tituloModal = '<i class="icon-plus"></i> Registrar Usuario';
               this.nombre = "";
-              this.tipo_documento = "DNI";
+              this.tipo_documento = "";
               this.num_documento = "";
               this.direccion = "";
               this.telefono = "";
@@ -645,7 +714,7 @@ export default {
             case "actualizar": {
               //console.log(data);
               this.modal = 1;
-              this.tituloModal = "Actualizar Usuario";
+              this.tituloModal = '<i class="icon-pencil"></i> Actualizar Usuario';
               this.tipoAccion = 2;
               this.persona_id = data["id"];
               this.nombre = data["nombre"];
@@ -663,7 +732,7 @@ export default {
               //console.log(data);
               this.modalPermisos = 1;
               this.tituloModalPermisos =
-                'Permisos del usuario "' + data["nombre"] + '"';
+                '<i class="icon-user-following"></i> Permisos del usuario "' + data["nombre"] + '"';
               this.persona_id = data["id"];
 
               let me = this;
@@ -700,82 +769,92 @@ export default {
       }
     },
     desactivarUsuario(id) {
-      swal({
-        title: "Esta seguro de desactivar este usuario?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Aceptar!",
-        cancelButtonText: "Cancelar",
-        confirmButtonClass: "btn btn-success",
-        cancelButtonClass: "btn btn-danger",
-        buttonsStyling: false,
-        reverseButtons: true
-      }).then(result => {
-        if (result.value) {
-          let me = this;
 
-          axios
-            .put("/user/desactivar", {
-              id: id
-            })
-            .then(function(response) {
-              me.listarPersona(1, "", "nombre");
-              swal(
-                "Desactivado!",
-                "El registro ha sido desactivado con éxito.",
-                "success"
-              );
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        } else if (
-          // Read more about handling dismissals
-          result.dismiss === swal.DismissReason.cancel
-        ) {
+      swal.queue([
+        {
+          title: "",
+          text: "¿Está seguro de desactivar este usuario?",
+          type: "question",
+          showCancelButton: true,
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+          confirmButtonClass: "btn btn-primary",
+          cancelButtonClass: "btn btn-secondary",
+          buttonsStyling: false,
+          reverseButtons: false,
+          allowOutsideClick: false,
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            let me = this;
+            return axios
+              .put("/user/desactivar", {
+                id: id
+              })
+              .then(function(response) {
+                me.listarPersona(1, "", "nombre");
+                swal.insertQueueStep({
+                  title: "Desactivado!",
+                  text: "El registro ha sido desactivado con éxito.",
+                  type: "success",
+                  confirmButtonText: "Listo",
+                  confirmButtonClass: "btn btn-primary",
+                  buttonsStyling: false
+                });
+              })
+              .catch(function(error) {
+                Swal.insertQueueStep({
+                  type: "error",
+                  title: "",
+                  text: error.response.data.message || error.response.statusText
+                });
+              });
+          }
         }
-      });
+      ]);
     },
     activarUsuario(id) {
-      swal({
-        title: "Esta seguro de activar este usuario?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Aceptar!",
-        cancelButtonText: "Cancelar",
-        confirmButtonClass: "btn btn-success",
-        cancelButtonClass: "btn btn-danger",
-        buttonsStyling: false,
-        reverseButtons: true
-      }).then(result => {
-        if (result.value) {
-          let me = this;
-
-          axios
-            .put("/user/activar", {
-              id: id
-            })
-            .then(function(response) {
-              me.listarPersona(1, "", "nombre");
-              swal(
-                "Activado!",
-                "El registro ha sido activado con éxito.",
-                "success"
-              );
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        } else if (
-          // Read more about handling dismissals
-          result.dismiss === swal.DismissReason.cancel
-        ) {
+      swal.queue([
+        {
+          title: "",
+          text: "¿Está seguro de activar este usuario?",
+          type: "question",
+          showCancelButton: true,
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+          confirmButtonClass: "btn btn-primary",
+          cancelButtonClass: "btn btn-secondary",
+          buttonsStyling: false,
+          reverseButtons: false,
+          allowOutsideClick: false,
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            let me = this;
+            return axios
+              .put("/user/activar", {
+                id: id
+              })
+              .then(function(response) {
+                me.listarPersona(1, "", "nombre");
+                swal.insertQueueStep({
+                  title: "Activado!",
+                  text: "El registro ha sido activado con éxito.",
+                  type: "success",
+                  confirmButtonText: "Listo",
+                  confirmButtonClass: "btn btn-primary",
+                  buttonsStyling: false
+                });
+              })
+              .catch(function(error) {
+                console.log(error.response);
+                Swal.insertQueueStep({
+                  type: "error",
+                  title: "",
+                  text: error.response.data.message || error.response.statusText
+                });
+              });
+          }
         }
-      });
+      ]);
     }
   },
   mounted() {
@@ -784,22 +863,4 @@ export default {
 };
 </script>
 <style>
-.modal-content {
-  width: 100% !important;
-  position: absolute !important;
-}
-.mostrar {
-  display: list-item !important;
-  opacity: 1 !important;
-  position: absolute !important;
-  background-color: #3c29297a !important;
-}
-.div-error {
-  display: flex;
-  justify-content: center;
-}
-.text-error {
-  color: red !important;
-  font-weight: bold;
-}
 </style>

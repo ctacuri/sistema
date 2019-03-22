@@ -18,12 +18,12 @@ class ArticuloController extends Controller
          
         if ($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->orderBy('articulos.id', 'desc');
         }
         else{
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->where('articulos.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('articulos.id', 'desc');
         }
@@ -55,12 +55,12 @@ class ArticuloController extends Controller
          
         if ($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->orderBy('articulos.id', 'desc');
         }
         else{
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->where('articulos.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('articulos.id', 'desc');
         }
@@ -82,13 +82,13 @@ class ArticuloController extends Controller
          
         if ($buscar==''){
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->where('articulos.stock','>','0')
             ->orderBy('articulos.id', 'desc');
         }
         else{
             $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
-            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock','articulos.descripcion','articulos.condicion')
+            ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre','categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.precio_02','articulos.precio_03','articulos.precio_04','articulos.stock','articulos.descripcion','articulos.condicion')
             ->where('articulos.'.$criterio, 'like', '%'. $buscar . '%')
             ->where('articulos.stock','>','0')
             ->orderBy('articulos.id', 'desc');
@@ -106,8 +106,10 @@ class ArticuloController extends Controller
     {
         $articulos = Articulo::join('categorias','articulos.idcategoria','=','categorias.id')
         ->select('articulos.id','articulos.idcategoria','articulos.codigo','articulos.nombre',
-        'categorias.nombre as nombre_categoria','articulos.precio_venta','articulos.stock',
-        'articulos.descripcion','articulos.condicion')
+        'categorias.nombre as nombre_categoria','articulos.precio_venta'
+        ,'articulos.precio_02','articulos.precio_03','articulos.precio_04'
+        ,'articulos.stock'
+        ,'articulos.descripcion','articulos.condicion')
         ->orderBy('articulos.nombre', 'desc');
 
         // Filtro multiempresa 
@@ -162,6 +164,9 @@ class ArticuloController extends Controller
         $articulo->codigo = $request->codigo;
         $articulo->nombre = strtoupper($request->nombre);
         $articulo->precio_venta = $request->precio_venta;
+        $articulo->precio_02 = $request->precio_02;
+        $articulo->precio_03 = $request->precio_03;
+        $articulo->precio_04 = $request->precio_04;
         $articulo->stock = $request->stock;
         $articulo->descripcion = strtoupper($request->descripcion);
         $articulo->condicion = '1';
@@ -176,6 +181,9 @@ class ArticuloController extends Controller
         $articulo->codigo = $request->codigo;
         $articulo->nombre = strtoupper($request->nombre);
         $articulo->precio_venta = $request->precio_venta;
+        $articulo->precio_02 = $request->precio_02;
+        $articulo->precio_03 = $request->precio_03;
+        $articulo->precio_04 = $request->precio_04;
         $articulo->stock = $request->stock;
         $articulo->descripcion = strtoupper($request->descripcion);
         //$articulo->condicion = '1';
@@ -267,6 +275,9 @@ class ArticuloController extends Controller
                             $articulo->codigo = $articulosArray[$i]['CODIGO'];
                             $articulo->nombre = strtoupper($articulosArray[$i]['NOMBRE']);
                             $articulo->precio_venta = $articulosArray[$i]['PRECIO'];
+                            $articulo->precio_02 = $articulosArray[$i]['PRECIO_02'];
+                            $articulo->precio_03 = $articulosArray[$i]['PRECIO_03'];
+                            $articulo->precio_04 = $articulosArray[$i]['PRECIO_04'];
                             $articulo->stock = $articulosArray[$i]['STOCK'];
                             $articulo->descripcion = strtoupper($articulosArray[$i]['DESCRIPCION']);
                             $articulo->condicion = '1';

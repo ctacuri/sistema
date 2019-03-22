@@ -44,6 +44,21 @@ class LoginController extends Controller
         return redirect('/');
     }
 
+    public function userinfo(){
+        $usuario  = '';
+        $avatar  = '';
+        $nombre = '';
+        $empresa = '';
+        if(Auth::check()){
+            $user = Auth::user();
+            $usuario = $user->usuario;
+            $avatar = $user->avatar;
+            $nombre = $user->persona->nombre;
+            $empresa = $user->empresa->nombre;
+        }
+        return response()->json(['usuario' => $usuario, 'nombre' => $nombre, 'avatar' => $avatar, 'empresa' => $empresa]);;
+    }
+    
     public function granted(){
         $granted = [];
         if(Auth::check()){

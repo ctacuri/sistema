@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
     */
 
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+    Route::get('/logged/userinfo', 'Auth\LoginController@userinfo');
     Route::get('/logged/granted', 'Auth\LoginController@granted');
     
     //Notificaciones
@@ -55,25 +56,25 @@ Route::group(['middleware' => ['auth']], function () {
             return (app()->make('App\Http\Controllers\CategoriaController'))->index($request);
         }
         else{
-            return abort(403,'Acción no autorizada.');
+            return abort(403,'El usuario no tiene permiso para ver las categorías.');
         }
     });
     Route::post('/categoria/registrar', function(Request $request) {
-        if(Auth::user()->puede('ADD_CATEGORIAS'))
+        if(Auth::user()->puede('AGREGAR_CATEGORIAS'))
         {
             return (app()->make('App\Http\Controllers\CategoriaController'))->store($request);
         }
         else{
-            return abort(403,'Acción no autorizada.');
+            return abort(403,'El usuario no puede agregar categorías.');
         }
     });
     Route::put('/categoria/actualizar', function(Request $request) {
-        if(Auth::user()->puede('EDIT_CATEGORIAS'))
+        if(Auth::user()->puede('ACTUALIZAR_CATEGORIAS'))
         {
             return (app()->make('App\Http\Controllers\CategoriaController'))->update($request);
         }
         else{
-            return abort(403,'Acción no autorizada.');
+            return abort(403,'El usuario no puede actualizar categorías.');
         }
     });
     Route::put('/categoria/desactivar', 'CategoriaController@desactivar');

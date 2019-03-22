@@ -92,7 +92,7 @@
                     <th>Nombre</th>
                     <th>Categoría</th>
                     <th>Precio Venta</th>
-                    <th>Stock</th>
+                    <!--<th>Stock</th>-->
                     <th>Descripción</th>
                     <th>Estado</th>
                 </tr>
@@ -104,7 +104,7 @@
                     <td>{{$a->nombre}}</td>
                     <td>{{$a->categoria->nombre}}</td>
                     <td>{{$a->precio_venta}}</td>
-                    <td>{{$a->stock}}</td>
+                    <!--<td>{{$a->stock}}</td>-->
                     <td>{{$a->descripcion}}</td>
                     <td>{{$a->condicion?'Activo':'Desactivado'}}</td>
                 </tr>

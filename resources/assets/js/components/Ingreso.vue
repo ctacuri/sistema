@@ -3,71 +3,105 @@
     <!-- Breadcrumb -->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="/">Escritorio</a>
+        <a href="#">Escritorio</a>
       </li>
+      <li class="breadcrumb-item">
+        <a href="#">Compras</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Ingresos</li>
     </ol>
+    <!-- / End Breadcrumb -->
     <div class="container-fluid">
-      <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Ingresos
-          <template v-if="$parent.granted['AGREGAR_INGRESOS']">
-            <button type="button" @click="mostrarDetalle()" class="btn btn-secondary">
-              <i class="icon-plus"></i>&nbsp;Nuevo
-            </button>
-          </template>
+          <!-- Title -->
+          <h3>
+            <i class="icon-present"></i> Ingresos
+          </h3>
+          <!-- / End Title -->
+          <!-- Header Options -->
+          <div class="card-header-options">
+            <template v-if="$parent.granted['AGREGAR_INGRESOS']">
+              <button
+                type="button"
+                @click="prepararNuevoIngreso()"
+                class="btn btn-link"
+                v-if="listado != 0"
+              >
+                <i class="icon-plus"></i>&nbsp;Registrar ingreso
+              </button>
+              <button
+                type="button"
+                @click="cancelarTodo()"
+                class="btn btn-link cancel-color"
+                v-else
+              >
+                <i class="icon-close"></i>&nbsp;Cancelar registro
+              </button>
+            </template>
+          </div>
+          <!-- / End Header Options -->
         </div>
-        <!-- Listado-->
+        <!-- List -->
         <template v-if="listado==1">
           <div class="card-body">
+            <!-- Filter Form -->
             <div class="form-group row">
-              <div class="col-md-6">
+              <div class="col-md-5">
                 <div class="input-group">
-                  <select class="form-control col-md-3" v-model="criterio">
-                    <option value="tipo_comprobante">Tipo Comprobante</option>
-                    <option value="num_comprobante">Número Comprobante</option>
-                    <option value="fecha_hora">Fecha-Hora</option>
-                  </select>
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Filtro</span>
+                    <select class="custom-select" v-model="criterio">
+                      <option value="tipo_comprobante">Por tipo de comprobante</option>
+                      <option value="num_comprobante">Por número de comprobante</option>
+                      <option value="fecha_hora">Por fecha-hora</option>
+                    </select>
+                  </div>
                   <input
                     type="text"
-                    v-model="buscar"
-                    @keyup.enter="listarIngreso(1,buscar,criterio)"
                     class="form-control"
-                    placeholder="Texto a buscar"
+                    placeholder="Texto a buscar..."
+                    @keyup.enter="listarIngreso(1,buscar,criterio)"
+                    v-model="buscar"
                   >
-                  <button
-                    type="submit"
-                    @click="listarIngreso(1,buscar,criterio)"
-                    class="btn btn-primary"
-                  >
-                    <i class="fa fa-search"></i> Buscar
-                  </button>
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-primary"
+                      type="submit"
+                      @click="listarIngreso(1,buscar,criterio)"
+                    >
+                      <i class="fa fa-search"></i> Buscar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th>Opciones</th>
-                    <th>Usuario</th>
-                    <th>Proveedor</th>
-                    <th>Tipo Comprobante</th>
-                    <th>Serie Comprobante</th>
-                    <th>Número Comprobante</th>
-                    <th>Fecha Hora</th>
-                    <th>Total</th>
-                    <th>Impuesto</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
-                    <td>
+            <!-- / End Filter Form -->
+            <!-- Table Records -->
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Opciones</th>
+                  <th>Usuario</th>
+                  <th>Proveedor</th>
+                  <th>Tipo Comprobante</th>
+                  <th>Serie Comprobante</th>
+                  <th>Número Comprobante</th>
+                  <th>Fecha Hora</th>
+                  <th>Total</th>
+                  <th>Impuesto</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="ingreso in arrayIngreso" :key="ingreso.id">
+                  <td>
+                    <!-- Row Options -->
+                    <div class="row-options">
                       <button
                         type="button"
-                        @click="verIngreso(ingreso.id)"
-                        class="btn btn-success btn-sm"
+                        @click="verDetalleIngreso(ingreso.id)"
+                        class="btn btn-link"
                       >
                         <i class="icon-eye"></i>
                       </button> &nbsp;
@@ -75,35 +109,40 @@
                         <template v-if="ingreso.estado=='Registrado'">
                           <button
                             type="button"
-                            class="btn btn-danger btn-sm"
+                            class="btn btn-link"
                             @click="desactivarIngreso(ingreso.id)"
                           >
                             <i class="icon-trash"></i>
                           </button>
                         </template>
                       </template>
-                    </td>
-                    <td v-text="ingreso.usuario"></td>
-                    <td v-text="ingreso.nombre"></td>
-                    <td v-text="ingreso.tipo_comprobante"></td>
-                    <td v-text="ingreso.serie_comprobante"></td>
-                    <td v-text="ingreso.num_comprobante"></td>
-                    <td v-text="ingreso.fecha_hora"></td>
-                    <td v-text="ingreso.total" class="text-right"></td>
-                    <td v-text="ingreso.impuesto" class="text-right"></td>
-                    <td v-text="ingreso.estado"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                    <!-- / End Row Options -->
+                  </td>
+                  <td v-text="ingreso.usuario"></td>
+                  <td v-text="ingreso.nombre"></td>
+                  <td v-text="ingreso.tipo_comprobante"></td>
+                  <td v-text="ingreso.serie_comprobante"></td>
+                  <td v-text="ingreso.num_comprobante"></td>
+                  <td v-text="ingreso.fecha_hora"></td>
+                  <td v-text="ingreso.total" class="text-right"></td>
+                  <td v-text="ingreso.impuesto" class="text-right"></td>
+                  <td v-text="ingreso.estado"></td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- / End Table Records -->
+            <!-- Pagination -->
             <nav>
-              <ul class="pagination">
-                <li class="page-item" v-if="pagination.current_page > 1">
+              <ul class="pagination" v-if="pagesNumber.length > 1">
+                <li class="page-item" v-bind:class="{'disabled': pagination.current_page == 1}">
                   <a
                     class="page-link"
                     href="#"
                     @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)"
-                  >Ant</a>
+                  >
+                    <i class="icon-arrow-left"></i>
+                  </a>
                 </li>
                 <li
                   class="page-item"
@@ -118,321 +157,430 @@
                     v-text="page"
                   ></a>
                 </li>
-                <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                <li
+                  class="page-item"
+                  v-bind:class="{'disabled': pagination.current_page == pagination.last_page}"
+                >
                   <a
                     class="page-link"
                     href="#"
                     @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)"
-                  >Sig</a>
+                  >
+                    <i class="icon-arrow-right"></i>
+                  </a>
                 </li>
               </ul>
             </nav>
+            <!-- / End Pagination -->
           </div>
         </template>
-        <!--Fin Listado-->
-        <!-- Detalle-->
+        <!-- / End List-->
+        <!-- Create Box -->
         <template v-else-if="listado==0">
           <div class="card-body">
-            <div class="form-group row border">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for>Proveedor(*)</label>
-                  <v-select
-                    id="search-proveedor"
-                    :on-search="selectProveedor"
-                    label="fullname"
-                    :options="arrayProveedor"
-                    placeholder="Buscar Proveedores..."
-                    :onChange="getDatosProveedor"
-                  ></v-select>
-
-                  <input type="hidden" v-model="impuesto">
-                </div>
-              </div>
-              <!--
-              <div class="col-md-3">
-                <label for>Impuesto(*)</label>
-                <input type="text" class="form-control" v-model="impuesto">
-              </div>
-              -->
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Tipo Comprobante(*)</label>
-                  <select
-                    class="form-control"
-                    v-model="tipo_comprobante"
-                    @change="validarImpuesto()"
-                  >
-                    <option value="0">Seleccione</option>
-                    <option value="BOLETA">Boleta</option>
-                    <option value="FACTURA">Factura</option>
-                    <option value="TICKET">Ticket</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Serie Comprobante</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="serie_comprobante"
-                    placeholder="000x"
-                  >
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Número Comprobante(*)</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="num_comprobante"
-                    placeholder="000xx"
-                  >
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div v-show="errorIngreso" class="form-group row div-error">
-                  <div class="text-center text-error">
-                    <div v-for="error in errorMostrarMsjIngreso" :key="error" v-text="error"></div>
+            <div class="vf-form">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Proveedor(*)</span>
+                    </div>
+                    <div class="v-select-wrapper">
+                      <v-select
+                        id="search-proveedor"
+                        :on-search="selectProveedor"
+                        label="fullname"
+                        :options="arrayProveedor"
+                        placeholder="Buscar Proveedores..."
+                        :onChange="getDatosProveedor"
+                      ></v-select>
+                      <input type="hidden" v-model="impuesto">
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group row border">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>
-                    Producto
-                    <span style="color:red;" v-show="idarticulo==0">(*Seleccione)</span>
-                  </label>
-                  <div class="form-inline">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Comprobante(*)</span>
+                    </div>
+                    <select
+                      class="custom-select"
+                      required="required"
+                      v-model="tipo_comprobante"
+                      v-bind:class="{'placeholder': (tipo_comprobante == 0) }"
+                      @change="validarImpuesto()"
+                    >
+                      <option value="0" selected disabled="disabled">Seleccione</option>
+                      <option value="BOLETA">Boleta</option>
+                      <option value="FACTURA">Factura</option>
+                      <option value="TICKET">Ticket</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Serie</span>
+                    </div>
                     <input
                       type="text"
-                      class="form-control"
-                      v-model="codigo"
-                      @keyup.enter="buscarArticulo()"
-                      placeholder="Ingrese producto"
+                      class="form-control text-uppercase"
+                      placeholder="000x"
+                      v-model="serie_comprobante"
                     >
-                    <button @click="abrirModal()" class="btn btn-primary">...</button>
-                    <input type="text" readonly class="form-control" v-model="articulo">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Número(*)</span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control text-uppercase"
+                      placeholder="000xx"
+                      v-model="num_comprobante"
+                    >
                   </div>
                 </div>
               </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>
-                    Precio
-                    <span style="color:red;" v-show="idarticulo==0">(*Ingrese)</span>
-                  </label>
-                  <input type="number" value="0" step="any" class="form-control" v-model="precio">
+
+              <div v-show="errorIngreso" class="modal-errors">
+                <div
+                  v-for="error in errorMostrarMsjIngreso"
+                  :key="error"
+                  class="alert alert-warning"
+                  role="alert"
+                >
+                  <i class="icon-ban"></i>
+                  <em v-text="error"></em>
                 </div>
               </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>
-                    Cantidad
-                    <span style="color:red;" v-show="idarticulo==0">(*Ingrese)</span>
-                  </label>
-                  <input type="number" value="0" class="form-control" v-model="cantidad">
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Buscar prod.</span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control text-uppercase"
+                      placeholder="Digite código de producto"
+                      v-model="codigo"
+                      @keyup.enter="buscarArticulo()"
+                    >
+                    <div class="input-group-append">
+                      <button @click="abrirModal()" class="btn btn-primary">...</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <!-- Empty -->
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text no-top-border">Producto</span>
+                    </div>
+                    <input
+                      type="text"
+                      readonly="readonly"
+                      class="form-control text-uppercase no-top-border"
+                      placeholder
+                      v-model="articulo"
+                    >
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span
+                        class="input-group-text"
+                        v-bind:class="{'error-color': (idarticulo!=0 && precio<=0)}"
+                      >Precio</span>
+                    </div>
+                    <input
+                      type="number"
+                      value="0.00"
+                      step="any"
+                      class="form-control"
+                      placeholder="0.00"
+                      v-model="precio"
+                    >
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span
+                        class="input-group-text"
+                        v-bind:class="{'error-color': (idarticulo!=0 && cantidad<=0)}"
+                      >Cantidad
+                        <span>(*)</span>
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      value="0.00"
+                      step="any"
+                      class="form-control"
+                      placeholder="0.00"
+                      v-model="cantidad"
+                    >
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="input-group">
+                    <button
+                      @click="agregarDetalle()"
+                      class="btn btn-link"
+                      v-bind:disabled="(idarticulo==0 || precio<=0 || cantidad<=0)"
+                    >
+                      <i class="icon-plus"></i> Agregar
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <button @click="agregarDetalle()" class="btn btn-success form-control btnagregar">
-                    <i class="icon-plus"></i>
-                  </button>
+              <div class="row">
+                <div class="col-md-12">
+                  <!-- Table Products -->
+                  <table class="table table-bordered table-striped table-align-middle">
+                    <thead>
+                      <tr>
+                        <th>Opciones</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody v-if="arrayDetalle.length">
+                      <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                        <td>
+                          <!-- Row Options -->
+                          <div class="row-options">
+                            <button
+                              @click="eliminarDetalle(index)"
+                              type="button"
+                              class="btn btn-link"
+                            >
+                              <i class="icon-close"></i>
+                            </button>
+                          </div>
+                          <!-- / End Row Options -->
+                        </td>
+                        <td v-text="detalle.articulo"></td>
+                        <td class="text-right">
+                          <input
+                            v-model="detalle.precio"
+                            type="number"
+                            class="form-control"
+                          >
+                        </td>
+                        <td class="text-right">
+                          <input
+                            v-model="detalle.cantidad"
+                            type="number"
+                            class="form-control"
+                          >
+                        </td>
+                        <td
+                          class="text-right"
+                        >{{ parseFloat(detalle.precio*detalle.cantidad).toFixed(2) | commaformat }}</td>
+                      </tr>
+                      <tr>
+                        <th colspan="4" class="text-right">Total Parcial:</th>
+                        <td class="text-right" style="background-color: rgba(80, 168, 216, 0.2);">
+                          <!--$-->
+                          {{ totalParcial = parseFloat(total - totalImpuesto).toFixed(2) | commaformat }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th colspan="4" class="text-right">Total Impuesto:</th>
+                        <td class="text-right" style="background-color: rgba(80, 168, 216, 0.4);">
+                          <!--$-->
+                          {{ totalImpuesto = parseFloat((total * impuesto) / (1 + impuesto)).toFixed(2) | commaformat }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th colspan="4" class="text-right">Total Neto:</th>
+                        <td class="text-right" style="background-color: rgba(80, 168, 216, 0.6);">
+                          <!--$-->
+                          {{ total = parseFloat(calcularTotal).toFixed(2) | commaformat }}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tbody v-else>
+                      <tr>
+                        <td colspan="5">No hay productos agregados</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- / End Table Products -->
+                  <!-- Additional Error Block -->
+                  <div v-show="errorIngreso" v-if="arrayDetalle.length > 10" class="modal-errors">
+                    <div
+                      v-for="error in errorMostrarMsjIngreso"
+                      :key="error"
+                      class="alert alert-warning"
+                      role="alert"
+                    >
+                      <i class="icon-ban"></i>
+                      <em v-text="error"></em>
+                    </div>
+                  </div>
+                  <!-- / End Additional Error Block -->
                 </div>
               </div>
-            </div>
-            <div class="form-group row border">
-              <div class="table-responsive col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th>Opciones</th>
-                      <th>Producto</th>
-                      <th>Precio</th>
-                      <th>Cantidad</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody v-if="arrayDetalle.length">
-                    <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
-                      <td>
-                        <button
-                          @click="eliminarDetalle(index)"
-                          type="button"
-                          class="btn btn-danger btn-sm"
-                        >
-                          <i class="icon-close"></i>
-                        </button>
-                      </td>
-                      <td v-text="detalle.articulo"></td>
-                      <td>
-                        <input
-                          v-model="detalle.precio"
-                          type="number"
-                          value="3"
-                          class="form-control"
-                        >
-                      </td>
-                      <td>
-                        <input
-                          v-model="detalle.cantidad"
-                          type="number"
-                          value="2"
-                          class="form-control"
-                        >
-                      </td>
-                      <td
-                        class="text-right"
-                      >{{ parseFloat(detalle.precio*detalle.cantidad).toFixed(2) | commaformat }}</td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="4" align="right">
-                        <strong>Total Parcial:</strong>
-                      </td>
-                      <td class="text-right">
-                        <!--$-->
-                        {{ totalParcial = parseFloat(total - totalImpuesto).toFixed(2) | commaformat }}
-                      </td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="4" align="right">
-                        <strong>Total Impuesto:</strong>
-                      </td>
-                      <td class="text-right">
-                        <!--$-->
-                        {{ totalImpuesto = parseFloat((total * impuesto) / (1 + impuesto)).toFixed(2) | commaformat }}
-                      </td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="4" align="right">
-                        <strong>Total Neto:</strong>
-                      </td>
-                      <td class="text-right">
-                        <!--$-->
-                        {{ total = parseFloat(calcularTotal).toFixed(2) | commaformat }}
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tbody v-else>
-                    <tr>
-                      <td colspan="5">No hay productos agregados</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-md-12">
-                <button type="button" @click="ocultarDetalle()" class="btn btn-secondary">Cerrar</button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  @click="registrarIngreso()"
-                >Registrar Compra</button>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="registrarIngreso()"
+                    >Registrar Compra</button>
+                    <button type="button" @click="cancelarTodo()" class="btn btn-link">Cancelar</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </template>
-        <!-- Fin Detalle-->
-        <!-- Ver ingreso -->
+        <!-- / End Create Box -->
+        <!-- View Details -->
         <template v-else-if="listado==2">
           <div class="card-body">
-            <div class="form-group row border">
-              <div class="col-md-9">
-                <div class="form-group">
-                  <label for>Proveedor</label>
-                  <p v-text="proveedor"></p>
+            <div class="invoice-box">
+              <div class="invoice-inner">
+                <div class="row">
+                  <div class="col-md-10">
+                    <div class="detail-block">
+                      <label>Proveedor</label>
+                      <input readonly="readonly" type="text" v-bind:value="proveedor">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="detail-block">
+                      <label>Impuesto</label>
+                      <input readonly="readonly" type="text" v-bind:value="impuesto">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-3">
-                <label for>Impuesto</label>
-                <p v-text="impuesto"></p>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Tipo Comprobante</label>
-                  <p v-text="tipo_comprobante"></p>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="detail-block">
+                      <label>Tipo Comprobante</label>
+                      <input readonly="readonly" type="text" v-bind:value="tipo_comprobante">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="detail-block">
+                      <label>Serie Comprobante</label>
+                      <input readonly="readonly" type="text" v-bind:value="serie_comprobante">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="detail-block">
+                      <label>Número Comprobante</label>
+                      <input readonly="readonly" type="text" v-bind:value="num_comprobante">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="detail-block">
+                      <label>Fecha</label>
+                      <input readonly="readonly" type="text" v-bind:value="fecha_guardada">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Serie Comprobante</label>
-                  <p v-text="serie_comprobante"></p>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="detail-block">
+                      <!-- Table Summary -->
+                      <table class="table table-bordered table-striped table-align-middle">
+                        <thead>
+                          <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                          </tr>
+                        </thead>
+                        <tbody v-if="arrayDetalle.length">
+                          <tr v-for="detalle in arrayDetalle" :key="detalle.id">
+                            <td v-text="detalle.articulo"></td>
+                            <td v-text="detalle.precio" class="text-right"></td>
+                            <td v-text="detalle.cantidad" class="text-right"></td>
+                            <td
+                              class="text-right"
+                            >{{ (detalle.precio * detalle.cantidad).toFixed(2) | commaformat }}</td>
+                          </tr>
+                          <tr>
+                            <th colspan="3" class="text-right">Total Parcial:</th>
+                            <td
+                              class="text-right"
+                              style="background-color: rgba(80, 168, 216, 0.2);"
+                            >
+                              <!--$-->
+                              {{ totalParcial = parseFloat(total - totalImpuesto).toFixed(2) | commaformat }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th colspan="3" class="text-right">Total Impuesto:</th>
+                            <td
+                              class="text-right"
+                              style="background-color: rgba(80, 168, 216, 0.4);"
+                            >
+                              <!--$-->
+                              {{ totalImpuesto = parseFloat(total * impuesto).toFixed(2) | commaformat }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th colspan="3" class="text-right">Total Neto:</th>
+                            <td
+                              class="text-right"
+                              style="background-color: rgba(80, 168, 216, 0.6);"
+                            >
+                              <!--$-->
+                              {{ total = parseFloat(total).toFixed(2) | commaformat }}
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tbody v-else>
+                          <tr>
+                            <td colspan="4">No hay productos agregados</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <!-- / End Table Summary -->
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Número Comprobante</label>
-                  <p v-text="num_comprobante"></p>
+                <div class="row">
+                  <div class="col-md-12">
+                    <button type="button" @click="cancelarTodo()" class="btn btn-link">
+                      <i class="icon icon-arrow-left"></i> Volver
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="form-group row border">
-              <div class="table-responsive col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th>Producto</th>
-                      <th>Precio</th>
-                      <th>Cantidad</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody v-if="arrayDetalle.length">
-                    <tr v-for="detalle in arrayDetalle" :key="detalle.id">
-                      <td v-text="detalle.articulo"></td>
-                      <td v-text="detalle.precio"></td>
-                      <td v-text="detalle.cantidad"></td>
-                      <td>{{ (detalle.precio*detalle.cantidad).toFixed(2) }}</td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="3" align="right">
-                        <strong>Total Parcial:</strong>
-                      </td>
-                      <td>$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}</td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="3" align="right">
-                        <strong>Total Impuesto:</strong>
-                      </td>
-                      <td>$ {{totalImpuesto=((total*impuesto)).toFixed(2)}}</td>
-                    </tr>
-                    <tr style="background-color: #CEECF5;">
-                      <td colspan="3" align="right">
-                        <strong>Total Neto:</strong>
-                      </td>
-                      <td>$ {{total}}</td>
-                    </tr>
-                  </tbody>
-                  <tbody v-else>
-                    <tr>
-                      <td colspan="4">No hay productos agregados</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-md-12">
-                <button type="button" @click="ocultarDetalle()" class="btn btn-secondary">Cerrar</button>
               </div>
             </div>
           </div>
         </template>
-        <!-- fin ver ingreso -->
+        <!-- / End View Details -->
       </div>
-      <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Inicio del modal agregar/actualizar-->
+    <!-- 
+      ** MODALS *
+    -->
+    <!-- Select Products Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modal}"
+      :class="{'show-modal' : modal}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -440,82 +588,104 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
+            <h4 class="modal-title" v-html="tituloModal"></h4>
             <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <div class="form-group row">
-              <div class="col-md-6">
-                <div class="input-group">
-                  <select class="form-control col-md-3" v-model="criterioA">
-                    <option value="nombre">Nombre</option>
-                    <option value="descripcion">Descripción</option>
-                    <option value="codigo">Código</option>
-                  </select>
-                  <input
-                    type="text"
-                    v-model="buscarA"
-                    @keyup.enter="listarArticulo(buscarA,criterioA)"
-                    class="form-control"
-                    placeholder="Texto a buscar"
-                  >
-                  <button
-                    type="submit"
-                    @click="listarArticulo(buscarA,criterioA)"
-                    class="btn btn-primary"
-                  >
-                    <i class="fa fa-search"></i> Buscar
-                  </button>
+            <div class="vf-form">
+              <!-- Filter Form -->
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="input-group">
+                    <div class="input-group-prepend with-select">
+                      <span class="input-group-text">Filtro</span>
+                      <select class="custom-select" v-model="criterioA">
+                        <option value="nombre" selected>Por nombre</option>
+                        <option value="descripcion">Por descripción</option>
+                        <option value="codigo">Por código</option>
+                      </select>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Texto a buscar..."
+                      @keyup.enter="listarArticulo(buscarA,criterioA)"
+                      v-model="buscarA"
+                    >
+                    <div class="input-group-append">
+                      <button
+                        class="btn btn-primary"
+                        type="submit"
+                        @click="listarArticulo(buscarA,criterioA)"
+                      >
+                        <i class="fa fa-search"></i> Buscar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th>Opciones</th>
-                    <th>Código</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Precio Venta</th>
-                    <th>Stock</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="articulo in arrayArticulo" :key="articulo.id">
-                    <td>
-                      <button
-                        type="button"
-                        @click="agregarDetalleModal(articulo)"
-                        class="btn btn-warning btn-sm"
-                      >
-                        <i class="icon-check"></i>
-                      </button>
-                    </td>
-                    <td v-text="articulo.codigo"></td>
-                    <td v-text="articulo.nombre"></td>
-                    <td v-text="articulo.nombre_categoria"></td>
-                    <td v-text="articulo.precio_venta"></td>
-                    <td v-text="articulo.stock"></td>
-                    <td>
-                      <div v-if="articulo.condicion">
-                        <span class="badge badge-success">Activo</span>
-                      </div>
-                      <div v-else>
-                        <span class="badge badge-danger">Desactivado</span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <!-- / End Filter Form -->
+              <!-- Table Results -->
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table table-bordered table-striped table-align-middle">
+                    <thead>
+                      <tr>
+                        <th>Opciones</th>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio Venta</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="articulo in arrayArticulo" :key="articulo.id">
+                        <td>
+                          <!-- Row Options -->
+                          <div class="row-options flex-center">
+                            <button
+                              type="button"
+                              @click="agregarDetalleModal(articulo)"
+                              class="btn btn-link"
+                            >
+                              <i class="icon-check"></i>
+                            </button>
+                          </div>
+                          <!-- / End Row Options -->
+                        </td>
+                        <td v-text="articulo.codigo"></td>
+                        <td v-text="articulo.nombre"></td>
+                        <td v-text="articulo.nombre_categoria"></td>
+                        <td v-text="articulo.precio_venta"></td>
+                        <td v-text="articulo.stock"></td>
+                        <td>
+                          <div v-if="articulo.condicion">
+                            <span class="badge badge-success">Activo</span>
+                          </div>
+                          <div v-else>
+                            <span class="badge badge-danger">Desactivado</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- / End Table Results -->
             </div>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+            <button type="button" class="btn btn-link" @click="cerrarModal()">Cerrar</button>
             <button
               type="button"
               v-if="tipoAccion==1"
@@ -529,12 +699,11 @@
               @click="actualizarPersona()"
             >Actualizar</button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
+    <!-- / End Select Products Modal-->
   </main>
 </template>
 
@@ -543,11 +712,12 @@ import vSelect from "vue-select";
 export default {
   data() {
     return {
+      fecha_guardada: null,
       ingreso_id: 0,
       idproveedor: 0,
       proveedor: "",
       nombre: "",
-      tipo_comprobante: "BOLETA",
+      tipo_comprobante: "",
       serie_comprobante: "",
       num_comprobante: "",
       impuesto: 0,
@@ -695,7 +865,7 @@ export default {
             me.articulo = me.arrayArticulo[0]["nombre"];
             me.idarticulo = me.arrayArticulo[0]["id"];
           } else {
-            me.articulo = "No existe articulo";
+            me.articulo = "Ningún producto seleccionado";
             me.idarticulo = 0;
           }
         })
@@ -727,7 +897,6 @@ export default {
       let me = this;
       //console.log(me);
       if (me.idarticulo == 0 || me.cantidad == 0 || me.precio == 0) {
-
       } else {
         if (me.encuentra(me.idarticulo)) {
           swal({
@@ -761,12 +930,12 @@ export default {
         });
       } else {
         */
-        me.arrayDetalle.push({
-          idarticulo: data["id"],
-          articulo: data["nombre"],
-          cantidad: 1,
-          precio: 1
-        });
+      me.arrayDetalle.push({
+        idarticulo: data["id"],
+        articulo: data["nombre"],
+        cantidad: 1,
+        precio: 1
+      });
       /*}*/
     },
     listarArticulo(buscar, criterio) {
@@ -842,12 +1011,12 @@ export default {
 
       return this.errorIngreso;
     },
-    mostrarDetalle() {
+    prepararNuevoIngreso() {
       let me = this;
       me.listado = 0;
 
       me.idproveedor = 0;
-      me.tipo_comprobante = "BOLETA";
+      me.tipo_comprobante = "";
       me.serie_comprobante = "";
       me.num_comprobante = "";
       me.impuesto = 0;
@@ -857,11 +1026,31 @@ export default {
       me.cantidad = 0;
       me.precio = 0;
       me.arrayDetalle = [];
+
+      me.errorIngreso = 0;
+      me.errorMostrarMsjIngreso = [];
     },
-    ocultarDetalle() {
-      this.listado = 1;
+    cancelarTodo() {
+      let me = this;
+
+      me.listado = 1;
+
+      me.idproveedor = 0;
+      me.tipo_comprobante = "";
+      me.serie_comprobante = "";
+      me.num_comprobante = "";
+      me.impuesto = 0;
+      me.total = 0.0;
+      me.idarticulo = 0;
+      me.articulo = "";
+      me.cantidad = 0;
+      me.precio = 0;
+      me.arrayDetalle = [];
+
+      me.proveedor = "";
+      me.fecha_guardada = null;
     },
-    verIngreso(id) {
+    verDetalleIngreso(id) {
       let me = this;
       me.listado = 2;
 
@@ -874,7 +1063,7 @@ export default {
         .then(function(response) {
           var respuesta = response.data;
           arrayIngresoT = respuesta.ingreso;
-
+          me.fecha_guardada = arrayIngresoT[0]["fecha_hora"];
           me.proveedor = arrayIngresoT[0]["nombre"];
           me.tipo_comprobante = arrayIngresoT[0]["tipo_comprobante"];
           me.serie_comprobante = arrayIngresoT[0]["serie_comprobante"];
@@ -907,46 +1096,51 @@ export default {
     abrirModal(modelo, accion, data = []) {
       this.arrayArticulo = [];
       this.modal = 1;
-      this.tituloModal = "Seleccione uno o varios articulos";
+      this.tituloModal =
+        '<i class="icon-present"></i> Seleccione uno o varios articulos';
     },
     desactivarIngreso(id) {
-      swal({
-        title: "Esta seguro de anular este ingreso?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Aceptar!",
-        cancelButtonText: "Cancelar",
-        confirmButtonClass: "btn btn-success",
-        cancelButtonClass: "btn btn-danger",
-        buttonsStyling: false,
-        reverseButtons: true
-      }).then(result => {
-        if (result.value) {
-          let me = this;
-
-          axios
-            .put("/ingreso/desactivar", {
-              id: id
-            })
-            .then(function(response) {
-              me.listarIngreso(1, "", "num_comprobante");
-              swal(
-                "Anulado!",
-                "El ingreso ha sido anulado con éxito.",
-                "success"
-              );
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        } else if (
-          // Read more about handling dismissals
-          result.dismiss === swal.DismissReason.cancel
-        ) {
+      swal.queue([
+        {
+          title: "",
+          text: "¿Está seguro de anular este ingreso?",
+          type: "question",
+          showCancelButton: true,
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+          confirmButtonClass: "btn btn-primary",
+          cancelButtonClass: "btn btn-secondary",
+          buttonsStyling: false,
+          reverseButtons: false,
+          allowOutsideClick: false,
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            let me = this;
+            return axios
+              .put("/ingreso/desactivar", {
+                id: id
+              })
+              .then(function(response) {
+                me.listarIngreso(1, "", "num_comprobante");
+                swal.insertQueueStep({
+                  title: "Anulado!",
+                  text: "El ingreso ha sido anulado con éxito.",
+                  type: "success",
+                  confirmButtonText: "Listo",
+                  confirmButtonClass: "btn btn-primary",
+                  buttonsStyling: false
+                });
+              })
+              .catch(function(error) {
+                Swal.insertQueueStep({
+                  type: "error",
+                  title: "",
+                  text: error.response.data.message || error.response.statusText
+                });
+              });
+          }
         }
-      });
+      ]);
     }
   },
 
@@ -957,33 +1151,4 @@ export default {
 };
 </script>
 <style>
-.modal-content {
-  width: 100% !important;
-  position: absolute !important;
-}
-.mostrar {
-  display: list-item !important;
-  opacity: 1 !important;
-  position: absolute !important;
-  background-color: #3c29297a !important;
-}
-.div-error {
-  display: flex;
-  justify-content: center;
-}
-.text-error {
-  color: red !important;
-  font-weight: bold;
-}
-.text-right {
-  text-align: right;
-}
-.text-left {
-  text-align: left;
-}
-@media (min-width: 600px) {
-  .btnagregar {
-    margin-top: 2rem;
-  }
-}
 </style>

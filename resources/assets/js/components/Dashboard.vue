@@ -7,14 +7,14 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                
+                <h4><i class="icon-speedometer"></i> Dashboard</h4>
             </div>
-            <div class="car-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card card-chart">
                             <div class="card-header">
-                                <h4>Ingresos</h4>
+                                <h5>Ingresos</h5>
                             </div>
                             <div class="card-content">
                                 <div class="ct-chart">
@@ -30,7 +30,7 @@
                     <div class="col-md-6">
                         <div class="card card-chart">
                             <div class="card-header">
-                                <h4>Ventas</h4>
+                                <h5>Ventas</h5>
                             </div>
                             <div class="card-content">
                                 <div class="ct-chart">

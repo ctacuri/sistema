@@ -5,60 +5,80 @@
       <li class="breadcrumb-item">
         <a href="#">Escritorio</a>
       </li>
+      <li class="breadcrumb-item active" aria-current="page">Empresa</li>
     </ol>
+    <!-- / End Breadcrumb -->
     <div class="container-fluid">
-      <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Empresas
+          <!-- Title -->
+          <h3>
+            <i class="icon-home"></i> Empresa
+          </h3>
+          <!-- / End Title -->
+          <!-- Header Options -->
+          <div class="card-header-options"></div>
+          <!-- / End Header Options -->
         </div>
         <div class="card-body">
+          <!-- Filter Form -->
           <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="input-group">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="ruc">Ruc</option>
-                  <option value="nombre">nombre</option>
-                </select>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Filtro</span>
+                  <select class="custom-select" v-model="criterio">
+                    <option value="ruc" selected>Por RUC</option>
+                    <option value="nombre">Por nombre</option>
+                  </select>
+                </div>
                 <input
                   type="text"
-                  v-model="buscar"
-                  @keyup.enter="listarEmpresa(1,buscar,criterio)"
                   class="form-control"
-                  placeholder="Texto a buscar"
+                  placeholder="Texto a buscar..."
+                  @keyup.enter="listarEmpresa(1,buscar,criterio)"
+                  v-model="buscar"
                 >
-                <button
-                  type="submit"
-                  @click="listarEmpresa(1,buscar,criterio)"
-                  class="btn btn-primary"
-                >
-                  <i class="fa fa-search"></i> Buscar
-                </button>
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    @click="listarEmpresa(1,buscar,criterio)"
+                  >
+                    <i class="fa fa-search"></i> Buscar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          <table class="table table-bordered table-striped table-sm">
+          <!-- / End Filter Form -->
+          <!-- Table Records -->
+          <table class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>Opciones</th>
-                <th>Ruc</th>
+                <th>RUC</th>
                 <th>Nombre</th>
-                <th>Direccion</th>
+                <th>Dirección</th>
                 <th>Estado</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="empresa in arrayEmpresa" :key="empresa.id">
                 <td>
-                  <template v-if="$parent.granted['ACTUALIZAR_EMPRESAS']">
-                    <button
-                      type="button"
-                      @click="abrirModal('empresa','actualizar',empresa)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      <i class="icon-pencil"></i>
-                    </button> &nbsp;
-                  </template>
+                  <!-- Row Options -->
+                  <div class="row-options">
+                    <template v-if="$parent.granted['ACTUALIZAR_EMPRESAS']">
+                      <button
+                        type="button"
+                        @click="abrirModal('empresa','actualizar',empresa)"
+                        class="btn btn-link"
+                      >
+                        <i class="icon-pencil"></i>
+                      </button> &nbsp;
+                    </template>
+                  </div>
+                  <!-- / End Row Options -->
                 </td>
                 <td v-text="empresa.ruc"></td>
                 <td v-text="empresa.nombre"></td>
@@ -74,14 +94,18 @@
               </tr>
             </tbody>
           </table>
+          <!-- / End Table Records -->
+          <!-- Pagination -->
           <nav>
-            <ul class="pagination">
-              <li class="page-item" v-if="pagination.current_page > 1">
+            <ul class="pagination" v-if="pagesNumber.length > 1">
+              <li class="page-item" v-bind:class="{'disabled': pagination.current_page == 1}">
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)"
-                >Ant</a>
+                >
+                  <i class="icon-arrow-left"></i>
+                </a>
               </li>
               <li
                 class="page-item"
@@ -96,24 +120,32 @@
                   v-text="page"
                 ></a>
               </li>
-              <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+              <li
+                class="page-item"
+                v-bind:class="{'disabled': pagination.current_page == pagination.last_page}"
+              >
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)"
-                >Sig</a>
+                >
+                  <i class="icon-arrow-right"></i>
+                </a>
               </li>
             </ul>
           </nav>
+          <!-- / End Pagination -->
         </div>
       </div>
-      <!-- Fin ejemplo de tabla Listado -->
     </div>
-    <!--Inicio del modal agregar/actualizar-->
+    <!-- 
+      ** MODALS **
+    -->
+    <!-- Create-Update Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modal}"
+      :class="{'show-modal' : modal}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -121,119 +153,143 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
+            <h4 class="modal-title" v-html="tituloModal"></h4>
             <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Ruc</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="ruc"
-                    class="form-control"
-                    placeholder="Ruc de empresa"
-                  >
+            <form action method="post" enctype="multipart/form-data" class="vf-form">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">RUC</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="RUC de la empresa"
+                  v-model="ruc"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Nombre</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="nombre"
-                    class="form-control text-uppercase"
-                    placeholder="Nombre de empresa"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Nombre</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Nombre de la empresa"
+                  v-model="nombre"
+                >
               </div>
-
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Departamento</label>
-                <div class="col-md-9">
-                  <select v-model="departamento" class="form-control" required="required">
-                    <option disabled value="0">Departamento</option>
-                    <option
-                      v-for="optDep in fillDepartamentos"
-                      v-bind:key="optDep.id"
-                      v-bind:value="optDep.id"
-                    >{{ optDep.descripcion }}</option>
-                  </select>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Departamento</span>
                 </div>
+                <select
+                  class="custom-select"
+                  required="required"
+                  v-model="departamento"
+                  v-bind:class="{'placeholder': !(departamento || false) }"
+                >
+                  <option disabled value="0">Departamento</option>
+                  <option
+                    v-for="optDep in fillDepartamentos"
+                    v-bind:key="optDep.id"
+                    v-bind:value="optDep.id" 
+                    v-text="optDep.descripcion"></option>
+                </select>
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Provincia</label>
-                <div class="col-md-9">
-                  <select v-model="provincia" class="form-control" required="required">
-                    <option disabled value="0">Provincia</option>
-                    <option
-                      v-for="optProv in fillProvincias"
-                      v-bind:key="optProv.iddepartamento + optProv.id"
-                      v-bind:value="optProv.id"
-                    >{{ optProv.descripcion }}</option>
-                  </select>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Provincia</span>
                 </div>
+                <select
+                  class="custom-select"
+                  required="required"
+                  v-model="provincia"
+                  v-bind:class="{'placeholder': !(provincia || false) }"
+                >
+                  <option disabled value="0">Provincia</option>
+                  <option
+                    v-for="optProv in fillProvincias"
+                    v-bind:key="optProv.iddepartamento + optProv.id"
+                    v-bind:value="optProv.id" 
+                    v-text="optProv.descripcion"></option>
+                </select>
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Distrito</label>
-                <div class="col-md-9">
-                  <select v-model="distrito" class="form-control" required="required">
-                    <option disabled value="0">Distrito</option>
-                    <option
-                      v-for="optDis in fillDistritos"
-                      v-bind:key="optDis.iddepartamento + optDis.idprovincia + optDis.id"
-                      v-bind:value="optDis.id"
-                    >{{ optDis.descripcion }}</option>
-                  </select>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Distrito</span>
                 </div>
+                <select
+                  class="custom-select"
+                  required="required"
+                  v-model="distrito"
+                  v-bind:class="{'placeholder': !(distrito || false) }"
+                >
+                  <option disabled value="0">Distrito</option>
+                  <option
+                    v-for="optDis in fillDistritos"
+                    v-bind:key="optDis.iddepartamento + optDis.idprovincia + optDis.id"
+                    v-bind:value="optDis.id" 
+                    v-text="optDis.descripcion"></option>
+                </select>
               </div>
-
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Direccion</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="direccion"
-                    class="form-control text-uppercase"
-                    placeholder="Direccion"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Dirección</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Dirección"
+                  v-model="direccion"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Telefono</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="telefono"
-                    class="form-control text-uppercase"
-                    placeholder="Telefono"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Teléfono</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Teléfono"
+                  v-model="telefono"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Email</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="email"
-                    class="form-control text-lowercase"
-                    placeholder="Email"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">E-mail</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-lowercase"
+                  placeholder="Correo electrónico"
+                  v-model="email"
+                >
               </div>
-              <div v-show="errorEmpresa" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjEmpresa" :key="error" v-text="error"></div>
+              <div v-show="errorEmpresa" class="modal-errors">
+                <div
+                  v-for="error in errorMostrarMsjEmpresa"
+                  :key="error"
+                  class="alert alert-warning"
+                  role="alert"
+                >
+                  <i class="icon-ban"></i>
+                  <em v-text="error"></em>
                 </div>
               </div>
             </form>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+            <button type="button" class="btn btn-link" @click="cerrarModal()">Cancelar</button>
             <button
               type="button"
               v-if="tipoAccion==1"
@@ -247,12 +303,11 @@
               @click="actualizarEmpresa()"
             >Actualizar</button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
+    <!-- / End Create-Update Modal -->
   </main>
 </template>
 <script>
@@ -342,13 +397,19 @@ export default {
           console.log(error);
         });
     },
+    cambiarPagina(page, buscar, criterio) {
+      let me = this;
+      //Actualiza la página actual
+      me.pagination.current_page = page;
+      //Envia la petición para visualizar la data de esa página
+      me.listarEmpresa(page, buscar, criterio);
+    },
     actualizarEmpresa() {
       if (this.validarEmpresa()) {
         return;
       }
 
       let me = this;
-
       axios
         .put("/empresa/actualizar", {
           ruc: this.ruc,
@@ -366,7 +427,13 @@ export default {
           me.listarEmpresa(1, "", "nombre");
         })
         .catch(function(error) {
-          console.log(error);
+          /*console.log(error.response);*/
+          if (error.response.status == 403) {
+            me.errorEmpresa = 1;
+            me.errorMostrarMsjEmpresa.push(
+              error.response.data.message || error.response.statusText
+            );
+          }
         });
     },
     validarEmpresa() {
@@ -443,7 +510,7 @@ export default {
             case "actualizar": {
               //console.log(data);
               me.modal = 1;
-              me.tituloModal = "Actualizar empresa";
+              me.tituloModal = '<i class="icon-pencil"></i> Actualizar empresa';
               me.tipoAccion = 2;
               me.empresa_id = data["id"];
               me.ruc = data["ruc"];
@@ -514,28 +581,3 @@ export default {
   }
 };
 </script>
-<style>
-.modal-content {
-  width: 100% !important;
-  position: absolute !important;
-}
-.mostrar {
-  display: list-item !important;
-  opacity: 1 !important;
-  position: absolute !important;
-  background-color: #3c29297a !important;
-}
-.div-error {
-  display: flex;
-  justify-content: center;
-}
-.text-error {
-  color: red !important;
-  font-weight: bold;
-}
-@media (min-width: 600px) {
-  .btnagregar {
-    margin-top: 2rem;
-  }
-}
-</style>

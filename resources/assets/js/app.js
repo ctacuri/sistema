@@ -40,13 +40,21 @@ const app = new Vue({
     data :{
         menu : 0,
         notifications: [],
-        granted: []
+        user: { },
+        granted: [],
+        opened: []
     },
     created(){
         let me = this;
         axios.post('/notification/get').then(function(response){
             //console.log(response.data);
             me.notifications = response.data;
+        }).catch(function(error){
+            console.log(error);
+        });
+
+        axios.get('/logged/userinfo').then(function(response){
+            me.user = response.data;
         }).catch(function(error){
             console.log(error);
         });
@@ -58,12 +66,40 @@ const app = new Vue({
             console.log(error);
         });
 
-        var userId = $('meta[name="userId"]').attr('content');
+        var userId = $('meta[name="userId"]').attr('content');      
 
         Echo.private('App.User.' + userId).notification((notification)=>{
             //console.log(notification);
             me.notifications.unshift(notification);
         });
+    },
+    methods: {
+        isActive: function(idArray){
+            var active = false;
+            idArray = idArray || [];
+            if(idArray.indexOf(this.menu) >= 0){
+                active = true;
+            }
+            return active;
+        },
+        setActive: function(id){
+            this.menu = id;
+        },
+        isOpen: function(id){
+            var open = false;
+            if(this.opened.indexOf(id) >= 0) {
+                open = true;
+            }
+            return open;
+        },
+        toogleOpenClass: function(id){
+            if(this.opened.indexOf(id) >= 0) {
+                this.opened.splice(this.opened.indexOf(id), 1);
+            }
+            else {
+                this.opened.push(id);
+            }
+        }
     }
 });
 

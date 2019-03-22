@@ -3,42 +3,66 @@
     <!-- Breadcrumb -->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="/">Escritorio</a>
+        <a href="#">Escritorio</a>
       </li>
+      <li class="breadcrumb-item">
+        <a href="#">Acceso</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Roles</li>
     </ol>
+    <!-- / End Breadcrumb -->
     <div class="container-fluid">
-      <!-- Ejemplo de tabla Listado -->
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Roles
-          <template v-if="$parent.granted['AGREGAR_ROLES']">
-            <button type="button" @click="abrirModal('rol','registrar')" class="btn btn-secondary">
-              <i class="icon-doc"></i>&nbsp;Nuevo
-            </button>
-          </template>
+          <!-- Title -->
+          <h3>
+            <i class="icon-user-following"></i> Roles
+          </h3>
+          <!-- / End Title -->
+          <!-- Header Options -->
+          <div class="card-header-options">
+            <template v-if="$parent.granted['AGREGAR_ROLES']">
+              <button type="button" @click="abrirModal('rol','registrar')" class="btn btn-link">
+                <i class="icon-plus"></i>&nbsp;Agregar rol
+              </button>
+            </template>
+          </div>
+          <!-- / End Header Options -->
         </div>
         <div class="card-body">
+          <!-- Filter Form -->
           <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="input-group">
-                <select class="form-control col-md-3" v-model="criterio">
-                  <option value="nombre">Nombre</option>
-                  <option value="descripcion">Descripción</option>
-                </select>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Filtro</span>
+                  <select class="custom-select" v-model="criterio">
+                    <option value="nombre" selected>Por nombre</option>
+                    <option value="descripcion">Por descripción</option>
+                  </select>
+                </div>
                 <input
                   type="text"
-                  v-model="buscar"
-                  @keyup.enter="listarRol(1,buscar,criterio)"
                   class="form-control"
-                  placeholder="Texto a buscar"
+                  placeholder="Texto a buscar..."
+                  @keyup.enter="listarRol(1,buscar,criterio)"
+                  v-model="buscar"
                 >
-                <button type="submit" @click="listarRol(1,buscar,criterio)" class="btn btn-primary">
-                  <i class="fa fa-search"></i> Buscar
-                </button>
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    @click="listarRol(1,buscar,criterio)"
+                  >
+                    <i class="fa fa-search"></i> Buscar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          <table class="table table-bordered table-striped table-sm">
+          <!-- / End Filter Form -->
+          <!-- Table Records -->
+          <table class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>Opciones</th>
@@ -50,27 +74,33 @@
             <tbody>
               <tr v-for="rol in arrayRol" :key="rol.id">
                 <td>
-                  <template v-if="$parent.granted['ACTUALIZAR_ROLES']">
-                    <template v-if="rol.idempresa != 0">
-                      <button
-                        type="button"
-                        @click="abrirModal('rol','actualizar',rol)"
-                        class="btn btn-warning btn-sm"
-                      >
-                        <i class="icon-pencil"></i>
-                      </button> &nbsp;
-                      <button
-                        type="button"
-                        @click="abrirModal('rol','permisos',rol)"
-                        class="btn btn-warning btn-sm"
-                      >
-                        <i class="icon-user-following"></i>
-                      </button>
+                  <!-- Row Options -->
+                  <div class="row-options">
+                    <template v-if="$parent.granted['ACTUALIZAR_ROLES']">
+                      <template v-if="rol.idempresa != 0">
+                        <button
+                          type="button"
+                          @click="abrirModal('rol','actualizar',rol)"
+                          class="btn btn-link"
+                        >
+                          <i class="icon-pencil"></i>
+                        </button> &nbsp;
+                        <button
+                          type="button"
+                          @click="abrirModal('rol','permisos',rol)"
+                          class="btn btn-link"
+                        >
+                          <i class="icon-user-following"></i>
+                        </button>
+                      </template>
+                      <template v-else>
+                        <span class="banned">
+                          <i class="icon-lock"></i> <span>Rol de sistema</span>
+                        </span>
+                      </template>
                     </template>
-                    <template v-else>
-                      <span>Rol de sistema</span>
-                    </template>
-                  </template>
+                  </div>
+                  <!-- / End Row Options -->
                 </td>
                 <td v-text="rol.nombre"></td>
                 <td v-text="rol.descripcion"></td>
@@ -85,14 +115,18 @@
               </tr>
             </tbody>
           </table>
+          <!-- / End Table Records -->
+          <!-- Pagination -->
           <nav>
-            <ul class="pagination">
-              <li class="page-item" v-if="pagination.current_page > 1">
+            <ul class="pagination" v-if="pagesNumber.length > 1">
+              <li class="page-item" v-bind:class="{'disabled': pagination.current_page == 1}">
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)"
-                >Ant</a>
+                >
+                  <i class="icon-arrow-left"></i>
+                </a>
               </li>
               <li
                 class="page-item"
@@ -107,25 +141,32 @@
                   v-text="page"
                 ></a>
               </li>
-              <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+              <li
+                class="page-item"
+                v-bind:class="{'disabled': pagination.current_page == pagination.last_page}"
+              >
                 <a
                   class="page-link"
                   href="#"
                   @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)"
-                >Sig</a>
+                >
+                  <i class="icon-arrow-right"></i>
+                </a>
               </li>
             </ul>
           </nav>
+          <!-- / End Pagination -->
         </div>
       </div>
-      <!-- Fin ejemplo de tabla Listado -->
     </div>
-
-    <!--Inicio del modal agregar/actualizar-->
+    <!-- 
+      ** MODALS **
+    -->
+    <!-- Create / Update Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modal}"
+      :class="{'show-modal' : modal}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -133,45 +174,57 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModal"></h4>
+            <h4 class="modal-title" v-html="tituloModal"></h4>
             <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Nombre (*)</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="nombre"
-                    class="form-control text-uppercase"
-                    placeholder="Nombre del rol"
-                  >
+            <form action method="post" enctype="multipart/form-data" class="vf-form">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Nombre</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Nombre del rol"
+                  v-model="nombre"
+                >
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    v-model="descripcion"
-                    class="form-control text-uppercase"
-                    placeholder="Descripción del rol"
-                  >
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Descripción</span>
                 </div>
+                <input
+                  type="text"
+                  class="form-control text-uppercase"
+                  placeholder="Descripción del rol"
+                  v-model="descripcion"
+                >
               </div>
-              <div v-show="errorRol" class="form-group row div-error">
-                <div class="text-center text-error">
-                  <div v-for="error in errorMostrarMsjRol" :key="error" v-text="error"></div>
+
+              <div v-show="errorRol" class="modal-errors">
+                <div
+                  v-for="error in errorMostrarMsjRol"
+                  :key="error"
+                  class="alert alert-warning"
+                  role="alert"
+                >
+                  <i class="icon-ban"></i>
+                  <em v-text="error"></em>
                 </div>
               </div>
             </form>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+            <button type="button" class="btn btn-link" @click="cerrarModal()">Cancelar</button>
             <button
               type="button"
               v-if="tipoAccion==1"
@@ -185,17 +238,17 @@
               @click="actualizarRol()"
             >Actualizar</button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
-    <!--Inicio del modal permisos-->
+    <!-- / End Update Modal -->
+    
+    <!-- Permissions Modal -->
     <div
       class="modal fade"
       tabindex="-1"
-      :class="{'mostrar' : modalPermisos}"
+      :class="{'show-modal' : modalPermisos}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -203,16 +256,19 @@
     >
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
+          <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title" v-text="tituloModalPermisos"></h4>
+            <h4 class="modal-title" v-html="tituloModalPermisos"></h4>
             <button type="button" class="close" @click="cerrarModalPermisos()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
+          <!-- / End Modal Header -->
+          <!-- Modal Body -->
           <div class="modal-body">
-            <form action method="post" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group row">
-                <div class="col-md-12">
+            <form action method="post" enctype="multipart/form-data" class="vf-form">
+              <div class="row">
+                <div class="col-sm-12">
                   <template v-if="permisos && permisos.length == 0">
                     <div>
                       <em>Cargando permisos</em>
@@ -224,6 +280,9 @@
                     </div>
                   </template>
                   <template v-else-if="permisos && permisos.length > 0">
+                    <div class="info-block">
+                      <p>Active los permisos que desea asignarle al rol.</p>
+                    </div>
                     <div class="checkbox-list-wrapper">
                       <ul class="checkbox-list">
                         <li v-for="permiso in permisos" v-bind:key="permiso.id">
@@ -254,13 +313,15 @@
               </div>
             </form>
           </div>
+          <!-- / End Modal Body -->
+          <!-- Modal Footer -->
           <div class="modal-footer">
             <button
               type="button"
               v-bind:disabled="procesandoPermisos"
               class="btn btn-secondary"
               @click="cerrarModalPermisos()"
-            >Cerrar</button>
+            >Cancelar</button>
             <button
               v-if="permisos && permisos.length > 0"
               type="button"
@@ -276,12 +337,11 @@
               </span>
             </button>
           </div>
+          <!-- / End Modal Footer -->
         </div>
-        <!-- /.modal-content -->
       </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!--Fin del modal-->
+    <!-- / End Permissions Modal -->
   </main>
 </template>
 
@@ -473,7 +533,7 @@ export default {
           switch (accion) {
             case "registrar": {
               this.modal = 1;
-              this.tituloModal = "Registrar Rol";
+              this.tituloModal = '<i class="icon-plus"></i> Registrar Rol';
               this.nombre = "";
               this.descripcion = "";
               this.tipoAccion = 1;
@@ -482,7 +542,7 @@ export default {
             case "actualizar": {
               //console.log(data);
               this.modal = 1;
-              this.tituloModal = "Actualizar Rol";
+              this.tituloModal = '<i class="icon-pencil"></i> Actualizar Rol';
               this.rol_id = data["id"];
               this.nombre = data["nombre"];
               this.descripcion = data["descripcion"];
@@ -493,7 +553,7 @@ export default {
               //console.log(data);
               this.modalPermisos = 1;
               this.tituloModalPermisos =
-                'Permisos del rol "' + data["nombre"] + '"';
+                '<i class="icon-user-following"></i> Permisos del rol "' + data["nombre"] + '"';
               this.rol_id = data["id"];
 
               let me = this;
@@ -536,22 +596,4 @@ export default {
 };
 </script>
 <style>
-.modal-content {
-  width: 100% !important;
-  position: absolute !important;
-}
-.mostrar {
-  display: list-item !important;
-  opacity: 1 !important;
-  position: absolute !important;
-  background-color: #3c29297a !important;
-}
-.div-error {
-  display: flex;
-  justify-content: center;
-}
-.text-error {
-  color: red !important;
-  font-weight: bold;
-}
 </style>

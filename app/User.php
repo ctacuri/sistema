@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'idempresa', 'usuario', 'password', 'idrol', 'condicion'
+        'id', 'idempresa', 'usuario', 'password', 'avatar', 'idrol', 'condicion'
     ];
 
     public $timestamps = false;
